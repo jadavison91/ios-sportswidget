@@ -207,7 +207,7 @@ struct ScoreboardView: View {
     @State private var isLoading = false
     @State private var lastError: String?
 
-    private let leagues = ["nba", "nfl", "mlb", "nhl", "eng.1", "eng.2", "usa.usl.c"]
+    private let leagues = ["nba", "nfl", "mlb", "nhl", "eng.1", "eng.2", "usa.usl.1"]
 
     var body: some View {
         NavigationStack {
@@ -320,7 +320,7 @@ struct ScoreboardView: View {
         case "nfl": return "football"
         case "mlb": return "baseball"
         case "nhl": return "hockey"
-        case "eng.1", "eng.2", "usa.usl.c": return "soccer"
+        case "eng.1", "eng.2", "usa.usl.1": return "soccer"
         default: return "basketball"
         }
     }
@@ -329,7 +329,7 @@ struct ScoreboardView: View {
         switch league.lowercased() {
         case "eng.1": return "EPL"
         case "eng.2": return "EFL"
-        case "usa.usl.c": return "USL"
+        case "usa.usl.1": return "USL"
         default: return league.uppercased()
         }
     }
@@ -507,7 +507,7 @@ struct ScoreboardTeamLogo: View {
         case "nhl": return .blue
         case "eng.1": return .purple
         case "eng.2": return .indigo
-        case "usa.usl.c": return .teal
+        case "usa.usl.1": return .teal
         default: return .gray
         }
     }
@@ -627,7 +627,7 @@ struct GameTeamBadge: View {
         case "nhl": return .blue
         case "eng.1": return .purple
         case "eng.2": return .indigo
-        case "usa.usl.c": return .teal
+        case "usa.usl.1": return .teal
         default: return .gray
         }
     }
@@ -684,7 +684,7 @@ struct TeamLogoView: View {
         case "nhl": return .blue
         case "eng.1": return .purple
         case "eng.2": return .indigo
-        case "usa.usl.c": return .teal
+        case "usa.usl.1": return .teal
         default: return .gray
         }
     }
@@ -728,7 +728,7 @@ struct TeamRowView: View {
         switch league.lowercased() {
         case "eng.1": return "EPL"
         case "eng.2": return "EFL"
-        case "usa.usl.c": return "USL"
+        case "usa.usl.1": return "USL"
         default: return league.uppercased()
         }
     }
@@ -739,7 +739,7 @@ struct TeamRowView: View {
         case "nfl": return "football.fill"
         case "mlb": return "baseball.fill"
         case "nhl": return "hockey.puck.fill"
-        case "eng.1", "eng.2", "usa.usl.c": return "soccerball"
+        case "eng.1", "eng.2", "usa.usl.1": return "soccerball"
         default: return "sportscourt.fill"
         }
     }
@@ -752,13 +752,13 @@ struct TeamPickerView: View {
     @State private var selectedLeague: String = "nba"
     @State private var searchText: String = ""
 
-    private let leagues = ["nba", "nfl", "mlb", "nhl", "eng.1", "eng.2", "usa.usl.c"]
+    private let leagues = ["nba", "nfl", "mlb", "nhl", "eng.1", "eng.2", "usa.usl.1"]
 
     private func leagueDisplayName(_ league: String) -> String {
         switch league {
         case "eng.1": return "EPL"
         case "eng.2": return "EFL"
-        case "usa.usl.c": return "USL"
+        case "usa.usl.1": return "USL"
         default: return league.uppercased()
         }
     }

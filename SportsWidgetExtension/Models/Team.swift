@@ -220,32 +220,33 @@ extension Team {
         Team(id: "352", name: "Wrexham", abbreviation: "WXM", sport: "soccer", league: "eng.2", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/352.png"),
     ]
 
-    // MARK: - USL Championship Teams (24 teams)
+    // MARK: - USL Championship Teams (correct league: usa.usl.1)
     static let uslTeams: [Team] = [
-        Team(id: "15296", name: "Birmingham Legion FC", abbreviation: "BHM", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/15296.png"),
-        Team(id: "15039", name: "Charleston Battery", abbreviation: "CHS", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/15039.png"),
-        Team(id: "9989", name: "Colorado Springs Switchbacks", abbreviation: "COS", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/9989.png"),
-        Team(id: "15302", name: "Detroit City FC", abbreviation: "DET", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/15302.png"),
-        Team(id: "15038", name: "El Paso Locomotive", abbreviation: "ELP", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/15038.png"),
-        Team(id: "15297", name: "FC Tulsa", abbreviation: "TUL", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/15297.png"),
-        Team(id: "15298", name: "Hartford Athletic", abbreviation: "HFD", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/15298.png"),
-        Team(id: "5765", name: "Indy Eleven", abbreviation: "IND", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/5765.png"),
-        Team(id: "15301", name: "Las Vegas Lights", abbreviation: "LVL", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/15301.png"),
-        Team(id: "9726", name: "Louisville City FC", abbreviation: "LOU", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/9726.png"),
-        Team(id: "15300", name: "Loudoun United", abbreviation: "LDN", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/15300.png"),
-        Team(id: "15299", name: "Memphis 901 FC", abbreviation: "MEM", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/15299.png"),
-        Team(id: "15303", name: "Miami FC", abbreviation: "MIA", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/15303.png"),
-        Team(id: "15304", name: "Monterey Bay FC", abbreviation: "MTB", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/15304.png"),
-        Team(id: "9727", name: "New Mexico United", abbreviation: "NMU", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/9727.png"),
-        Team(id: "15305", name: "Oakland Roots SC", abbreviation: "OAK", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/15305.png"),
-        Team(id: "9991", name: "Orange County SC", abbreviation: "OC", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/9991.png"),
-        Team(id: "9728", name: "Phoenix Rising FC", abbreviation: "PHX", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/9728.png"),
-        Team(id: "5764", name: "Pittsburgh Riverhounds", abbreviation: "PIT", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/5764.png"),
-        Team(id: "15040", name: "Rhode Island FC", abbreviation: "RI", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/15040.png"),
-        Team(id: "9992", name: "Sacramento Republic", abbreviation: "SAC", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/9992.png"),
-        Team(id: "9990", name: "San Antonio FC", abbreviation: "SA", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/9990.png"),
-        Team(id: "9988", name: "Tampa Bay Rowdies", abbreviation: "TBR", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/9988.png"),
-        Team(id: "15306", name: "Tulsa Athletic", abbreviation: "TLSA", sport: "soccer", league: "usa.usl.c", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/15306.png"),
+        Team(id: "19405", name: "Birmingham Legion FC", abbreviation: "BRM", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/19405.png"),
+        Team(id: "131579", name: "Brooklyn FC", abbreviation: "BFKC", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/131579.png"),
+        Team(id: "9729", name: "Charleston Battery", abbreviation: "CHS", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/9729.png"),
+        Team(id: "17830", name: "Colorado Springs Switchbacks FC", abbreviation: "COS", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/17830.png"),
+        Team(id: "19179", name: "Detroit City FC", abbreviation: "DET", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/19179.png"),
+        Team(id: "19407", name: "El Paso Locomotive FC", abbreviation: "ELP", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/19407.png"),
+        Team(id: "18446", name: "FC Tulsa", abbreviation: "TUL", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/18446.png"),
+        Team(id: "19411", name: "Hartford Athletic", abbreviation: "HFD", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/19411.png"),
+        Team(id: "17360", name: "Indy Eleven", abbreviation: "INDY", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/17360.png"),
+        Team(id: "18987", name: "Las Vegas Lights FC", abbreviation: "LVL", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/18987.png"),
+        Team(id: "21822", name: "Lexington SC", abbreviation: "LEX", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/21822.png"),
+        Team(id: "19410", name: "Loudoun United FC", abbreviation: "LDN", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/19410.png"),
+        Team(id: "17832", name: "Louisville City FC", abbreviation: "LOU", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/17832.png"),
+        Team(id: "18159", name: "Miami FC", abbreviation: "MIA", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/18159.png"),
+        Team(id: "21370", name: "Monterey Bay FC", abbreviation: "MTB", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/21370.png"),
+        Team(id: "19408", name: "New Mexico United", abbreviation: "NMU", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/19408.png"),
+        Team(id: "20687", name: "Oakland Roots SC", abbreviation: "OAK", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/20687.png"),
+        Team(id: "18455", name: "Orange County SC", abbreviation: "OCSC", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/18455.png"),
+        Team(id: "17850", name: "Phoenix Rising FC", abbreviation: "PHX", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/17850.png"),
+        Team(id: "17827", name: "Pittsburgh Riverhounds SC", abbreviation: "PIT", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/17827.png"),
+        Team(id: "22164", name: "Rhode Island FC", abbreviation: "RHI", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/22164.png"),
+        Team(id: "17828", name: "Sacramento Republic FC", abbreviation: "SAC", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/17828.png"),
+        Team(id: "18265", name: "San Antonio FC", abbreviation: "SAFC", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/18265.png"),
+        Team(id: "131578", name: "Sporting Jacksonville", abbreviation: "JAX", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/131578.png"),
+        Team(id: "17361", name: "Tampa Bay Rowdies", abbreviation: "TBR", sport: "soccer", league: "usa.usl.1", logoUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/17361.png"),
     ]
 
     // MARK: - All Teams Combined
@@ -259,7 +260,7 @@ extension Team {
         case "nhl": return nhlTeams
         case "eng.1", "epl": return eplTeams
         case "eng.2", "ech": return echTeams
-        case "usa.usl.c", "usl": return uslTeams
+        case "usa.usl.1", "usl": return uslTeams
         default: return []
         }
     }
