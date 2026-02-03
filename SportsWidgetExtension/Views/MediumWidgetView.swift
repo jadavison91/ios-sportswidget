@@ -11,20 +11,24 @@ import WidgetKit
 struct MediumWidgetView: View {
     let entry: ScheduleEntry
 
+    private var colorPalette: AppGroup.WidgetBackgroundPreset {
+        AppGroup.widgetBackgroundPreset
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             // Header
             HStack {
                 Image(systemName: "sportscourt.fill")
                     .font(.caption)
-                    .foregroundStyle(.green)
+                    .foregroundStyle(colorPalette.accentColor)
                 Text("Gametime")
                     .font(.system(size: 13, weight: .bold, design: .rounded))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(colorPalette.foregroundColor)
                 Spacer()
                 Text(entry.formattedLastUpdated)
                     .font(.system(size: 9, design: .rounded))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(colorPalette.secondaryForegroundColor)
             }
 
             Divider()
@@ -65,17 +69,17 @@ struct MediumWidgetView: View {
             VStack(spacing: 8) {
                 Image(systemName: errorIcon(for: error))
                     .font(.title)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(colorPalette.secondaryForegroundColor)
 
                 Text(error.rawValue)
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(colorPalette.secondaryForegroundColor)
                     .multilineTextAlignment(.center)
 
                 if error == .noTeamsSelected {
                     Text("Open the app to add teams")
                         .font(.caption)
-                        .foregroundStyle(.tertiary)
+                        .foregroundStyle(colorPalette.secondaryForegroundColor.opacity(0.7))
                 }
             }
             Spacer()
@@ -101,11 +105,11 @@ struct MediumWidgetView: View {
             VStack(spacing: 8) {
                 Image(systemName: "calendar.badge.minus")
                     .font(.title)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(colorPalette.secondaryForegroundColor)
 
                 Text("No upcoming games")
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(colorPalette.secondaryForegroundColor)
             }
             Spacer()
         }
@@ -117,24 +121,28 @@ struct MediumWidgetView: View {
 struct CompactScorebugRow: View {
     let game: Game
 
-    /// Color for away team score - green if winning and game is final
+    private var colorPalette: AppGroup.WidgetBackgroundPreset {
+        AppGroup.widgetBackgroundPreset
+    }
+
+    /// Color for away team score - green if winning and game is final, otherwise uses palette
     private var awayScoreColor: Color {
         guard game.status == .completed,
               let awayScore = game.awayScore,
               let homeScore = game.homeScore,
               awayScore > homeScore else {
-            return .primary
+            return colorPalette.foregroundColor
         }
         return .green
     }
 
-    /// Color for home team score - green if winning and game is final
+    /// Color for home team score - green if winning and game is final, otherwise uses palette
     private var homeScoreColor: Color {
         guard game.status == .completed,
               let awayScore = game.awayScore,
               let homeScore = game.homeScore,
               homeScore > awayScore else {
-            return .primary
+            return colorPalette.foregroundColor
         }
         return .green
     }
@@ -155,6 +163,7 @@ struct CompactScorebugRow: View {
             HStack(spacing: 4) {
                 Text(game.awayTeamAbbreviation)
                     .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .foregroundStyle(colorPalette.foregroundColor)
                     .frame(width: 36, alignment: .leading)
 
                 // Always reserve space for score
@@ -172,7 +181,7 @@ struct CompactScorebugRow: View {
             // Separator (always same width)
             Text(game.shouldShowScore ? "-" : "@")
                 .font(.system(size: 10, weight: .medium, design: .rounded))
-                .foregroundStyle(.primary.opacity(0.6))
+                .foregroundStyle(colorPalette.secondaryForegroundColor)
                 .frame(width: 20)
 
             // Home team + score (fixed width for alignment)
@@ -190,6 +199,7 @@ struct CompactScorebugRow: View {
 
                 Text(game.homeTeamAbbreviation)
                     .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .foregroundStyle(colorPalette.foregroundColor)
                     .frame(width: 36, alignment: .trailing)
             }
 
@@ -207,13 +217,13 @@ struct CompactScorebugRow: View {
     private var statusColor: Color {
         switch game.status {
         case .completed:
-            return .primary
+            return colorPalette.foregroundColor
         case .inProgress:
-            return .green
+            return colorPalette.accentColor
         case .postponed, .canceled:
             return .orange
         case .scheduled:
-            return .primary
+            return colorPalette.foregroundColor
         }
     }
 }

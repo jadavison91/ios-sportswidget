@@ -11,16 +11,20 @@ import WidgetKit
 struct SmallWidgetView: View {
     let entry: ScheduleEntry
 
+    private var colorPalette: AppGroup.WidgetBackgroundPreset {
+        AppGroup.widgetBackgroundPreset
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             // Header
             HStack {
                 Image(systemName: "sportscourt.fill")
                     .font(.caption)
-                    .foregroundStyle(.green)
+                    .foregroundStyle(colorPalette.accentColor)
                 Text("Gametime")
                     .font(.system(size: 12, weight: .bold, design: .rounded))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(colorPalette.foregroundColor)
                 Spacer()
             }
 
@@ -40,7 +44,7 @@ struct SmallWidgetView: View {
             // Footer
             Text(entry.formattedLastUpdated)
                 .font(.system(size: 9, design: .rounded))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(colorPalette.secondaryForegroundColor)
         }
         .padding(12)
         .widgetURL(widgetDeepLink)
@@ -68,11 +72,11 @@ struct SmallWidgetView: View {
         VStack(spacing: 8) {
             Image(systemName: errorIcon(for: error))
                 .font(.title2)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(colorPalette.secondaryForegroundColor)
 
             Text(error.rawValue)
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(colorPalette.secondaryForegroundColor)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -94,11 +98,11 @@ struct SmallWidgetView: View {
         VStack(spacing: 8) {
             Image(systemName: "calendar.badge.minus")
                 .font(.title2)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(colorPalette.secondaryForegroundColor)
 
             Text("No upcoming games")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(colorPalette.secondaryForegroundColor)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -109,24 +113,28 @@ struct SmallWidgetView: View {
 struct SmallGameRowView: View {
     let game: Game
 
-    /// Color for away team score - green if winning and game is final
+    private var colorPalette: AppGroup.WidgetBackgroundPreset {
+        AppGroup.widgetBackgroundPreset
+    }
+
+    /// Color for away team score - green if winning and game is final, otherwise uses palette
     private var awayScoreColor: Color {
         guard game.status == .completed,
               let awayScore = game.awayScore,
               let homeScore = game.homeScore,
               awayScore > homeScore else {
-            return .primary
+            return colorPalette.foregroundColor
         }
         return .green
     }
 
-    /// Color for home team score - green if winning and game is final
+    /// Color for home team score - green if winning and game is final, otherwise uses palette
     private var homeScoreColor: Color {
         guard game.status == .completed,
               let awayScore = game.awayScore,
               let homeScore = game.homeScore,
               homeScore > awayScore else {
-            return .primary
+            return colorPalette.foregroundColor
         }
         return .green
     }
@@ -146,6 +154,7 @@ struct SmallGameRowView: View {
             HStack(spacing: 4) {
                 Text(game.awayTeamAbbreviation)
                     .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundStyle(colorPalette.foregroundColor)
 
                 if game.shouldShowScore {
                     if let away = game.awayScore, let home = game.homeScore {
@@ -153,7 +162,7 @@ struct SmallGameRowView: View {
                             Text("\(away)")
                                 .foregroundStyle(awayScoreColor)
                             Text("-")
-                                .foregroundStyle(.primary.opacity(0.6))
+                                .foregroundStyle(colorPalette.secondaryForegroundColor)
                             Text("\(home)")
                                 .foregroundStyle(homeScoreColor)
                         }
@@ -162,11 +171,12 @@ struct SmallGameRowView: View {
                 } else {
                     Text("@")
                         .font(.system(size: 12, weight: .medium, design: .rounded))
-                        .foregroundStyle(.primary.opacity(0.6))
+                        .foregroundStyle(colorPalette.secondaryForegroundColor)
                 }
 
                 Text(game.homeTeamAbbreviation)
                     .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundStyle(colorPalette.foregroundColor)
             }
 
             // Status (centered)
@@ -181,13 +191,13 @@ struct SmallGameRowView: View {
     private var statusColor: Color {
         switch game.status {
         case .completed:
-            return .primary
+            return colorPalette.foregroundColor
         case .inProgress:
-            return .green
+            return colorPalette.accentColor
         case .postponed, .canceled:
             return .orange
         case .scheduled:
-            return .primary
+            return colorPalette.foregroundColor
         }
     }
 }

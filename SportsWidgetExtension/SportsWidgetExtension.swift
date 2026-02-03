@@ -172,4 +172,64 @@ extension AppGroup.WidgetBackgroundPreset {
             return Color(red: 0.15, green: 0.15, blue: 0.15)
         }
     }
+
+    /// Primary foreground color for text (high contrast with background)
+    var foregroundColor: Color {
+        switch self {
+        case .system:
+            return .primary
+        case .darkBlue:
+            return Color(red: 0.85, green: 0.92, blue: 1.0)  // Light blue-white
+        case .darkGreen:
+            return Color(red: 0.85, green: 1.0, blue: 0.9)   // Light mint
+        case .darkPurple:
+            return Color(red: 0.95, green: 0.88, blue: 1.0)  // Light lavender
+        case .darkRed:
+            return Color(red: 1.0, green: 0.9, blue: 0.88)   // Light coral
+        case .darkOrange:
+            return Color(red: 1.0, green: 0.95, blue: 0.88)  // Light cream
+        case .black, .charcoal:
+            return .white
+        }
+    }
+
+    /// Secondary foreground color for less prominent text
+    var secondaryForegroundColor: Color {
+        switch self {
+        case .system:
+            return .secondary
+        case .darkBlue:
+            return Color(red: 0.6, green: 0.75, blue: 0.9)
+        case .darkGreen:
+            return Color(red: 0.6, green: 0.85, blue: 0.7)
+        case .darkPurple:
+            return Color(red: 0.75, green: 0.65, blue: 0.85)
+        case .darkRed:
+            return Color(red: 0.9, green: 0.65, blue: 0.6)
+        case .darkOrange:
+            return Color(red: 0.9, green: 0.75, blue: 0.6)
+        case .black, .charcoal:
+            return Color(white: 0.7)
+        }
+    }
+
+    /// Accent color that complements the background
+    var accentColor: Color {
+        switch self {
+        case .system:
+            return .green
+        case .darkBlue:
+            return Color(red: 0.4, green: 0.8, blue: 1.0)    // Bright cyan
+        case .darkGreen:
+            return Color(red: 0.4, green: 1.0, blue: 0.6)    // Bright mint
+        case .darkPurple:
+            return Color(red: 0.8, green: 0.5, blue: 1.0)    // Bright violet
+        case .darkRed:
+            return Color(red: 1.0, green: 0.6, blue: 0.5)    // Bright coral
+        case .darkOrange:
+            return Color(red: 1.0, green: 0.8, blue: 0.4)    // Bright gold
+        case .black, .charcoal:
+            return .green
+        }
+    }
 }
