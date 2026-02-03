@@ -1,11 +1,12 @@
 //
 //  Game.swift
-//  SportsWidget
+//  SportsWidgetExtension
 //
-//  Created by Jason Davison on 1/29/26.
+//  Shared model - keep in sync with SportsWidget/Models/Game.swift
 //
 
 import Foundation
+import SwiftUI
 
 struct Game: Codable, Identifiable, Hashable {
     let id: String
@@ -183,5 +184,61 @@ struct Game: Codable, Identifiable, Hashable {
     /// Whether this game should show a score (in progress or completed)
     var shouldShowScore: Bool {
         hasScore && (status == .inProgress || status == .completed)
+    }
+
+    /// League logo URL from ESPN CDN
+    var leagueLogoUrl: String {
+        switch league.lowercased() {
+        // US Sports - use league name pattern
+        case "nba":
+            return "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png"
+        case "nfl":
+            return "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png"
+        case "mlb":
+            return "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png"
+        case "nhl":
+            return "https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png"
+        // Soccer - use league ID pattern
+        case "eng.1":  // Premier League
+            return "https://a.espncdn.com/i/leaguelogos/soccer/500/23.png"
+        case "eng.2":  // EFL Championship
+            return "https://a.espncdn.com/i/leaguelogos/soccer/500/24.png"
+        case "usa.usl.1", "usl":  // USL Championship
+            return "https://a.espncdn.com/i/leaguelogos/soccer/500/2292.png"
+        case "usa.1":  // MLS
+            return "https://a.espncdn.com/i/leaguelogos/soccer/500/19.png"
+        default:
+            return "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png"
+        }
+    }
+
+    /// Short badge text for league
+    var leagueBadge: String {
+        switch league.lowercased() {
+        case "nba": return "NBA"
+        case "nfl": return "NFL"
+        case "mlb": return "MLB"
+        case "nhl": return "NHL"
+        case "eng.1": return "EPL"
+        case "eng.2": return "EFL"
+        case "usa.usl.1", "usl": return "USL"
+        case "usa.1": return "MLS"
+        default: return league.prefix(3).uppercased()
+        }
+    }
+
+    /// Color for league badge
+    var leagueColor: Color {
+        switch league.lowercased() {
+        case "nba": return Color(red: 0.77, green: 0.11, blue: 0.19)  // NBA red
+        case "nfl": return Color(red: 0.0, green: 0.21, blue: 0.47)   // NFL blue
+        case "mlb": return Color(red: 0.75, green: 0.0, blue: 0.17)   // MLB red
+        case "nhl": return Color(red: 0.0, green: 0.0, blue: 0.0)     // NHL black
+        case "eng.1": return Color(red: 0.22, green: 0.0, blue: 0.47) // EPL purple
+        case "eng.2": return Color(red: 0.91, green: 0.44, blue: 0.13) // EFL orange
+        case "usa.usl.1", "usl": return Color(red: 0.0, green: 0.31, blue: 0.56) // USL blue
+        case "usa.1": return Color(red: 0.0, green: 0.24, blue: 0.45) // MLS blue
+        default: return Color.gray
+        }
     }
 }

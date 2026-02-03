@@ -297,7 +297,18 @@ actor ESPNAPIClient {
     private func parseStatus(_ statusType: ESPNStatusType?) -> Game.GameStatus {
         guard let statusType = statusType else { return .scheduled }
 
-        // Check the completed flag first (most reliable)
+        // Check name field first for postponed/canceled (these take priority)
+        // ESPN uses STATUS_POSTPONED, STATUS_CANCELED etc.
+        if let name = statusType.name?.lowercased() {
+            if name.contains("postpone") {
+                return .postponed
+            }
+            if name.contains("cancel") || name.contains("abandon") {
+                return .canceled
+            }
+        }
+
+        // Check the completed flag (reliable for actual completions)
         if statusType.completed == true {
             return .completed
         }
@@ -313,7 +324,7 @@ actor ESPNAPIClient {
             }
         }
 
-        // Check name and shortDetail for status keywords
+        // Check name and shortDetail for additional status keywords
         let textsToCheck = [
             statusType.name?.lowercased(),
             statusType.shortDetail?.lowercased()
@@ -321,7 +332,7 @@ actor ESPNAPIClient {
 
         for text in textsToCheck {
             // Completed states
-            if text.contains("final") || text.contains("post") ||
+            if text.contains("final") ||
                text == "ft" || text.contains("full time") || text.contains("fulltime") ||
                text == "aet" || text.contains("after extra") ||
                text.contains("ended") || text.contains("complete") {
@@ -333,11 +344,11 @@ actor ESPNAPIClient {
                text == "1h" || text == "2h" || text.contains("live") {
                 return .inProgress
             }
-            // Postponed
+            // Postponed (fallback check)
             if text.contains("postpone") {
                 return .postponed
             }
-            // Canceled
+            // Canceled (fallback check)
             if text.contains("cancel") || text.contains("abandon") {
                 return .canceled
             }

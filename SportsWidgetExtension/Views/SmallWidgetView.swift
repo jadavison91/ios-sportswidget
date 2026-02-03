@@ -17,11 +17,10 @@ struct SmallWidgetView: View {
             HStack {
                 Image(systemName: "sportscourt.fill")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
-                Text("Games")
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.green)
+                Text("Gametime")
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .foregroundStyle(.primary)
                 Spacer()
             }
 
@@ -40,8 +39,8 @@ struct SmallWidgetView: View {
 
             // Footer
             Text(entry.formattedLastUpdated)
-                .font(.system(size: 9))
-                .foregroundStyle(.tertiary)
+                .font(.system(size: 9, design: .rounded))
+                .foregroundStyle(.secondary)
         }
         .padding(12)
         .widgetURL(widgetDeepLink)
@@ -134,10 +133,19 @@ struct SmallGameRowView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            // Teams and score
+            // Teams and score with league badge
             HStack(spacing: 4) {
+                // League badge (left side)
+                Text(game.leagueBadge)
+                    .font(.system(size: 7, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 3)
+                    .padding(.vertical, 1)
+                    .background(game.leagueColor)
+                    .clipShape(RoundedRectangle(cornerRadius: 2))
+
                 Text(game.awayTeamAbbreviation)
-                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
 
                 if game.shouldShowScore {
                     if let away = game.awayScore, let home = game.homeScore {
@@ -145,19 +153,20 @@ struct SmallGameRowView: View {
                             Text("\(away)")
                                 .foregroundStyle(awayScoreColor)
                             Text("-")
+                                .foregroundStyle(.primary.opacity(0.6))
                             Text("\(home)")
                                 .foregroundStyle(homeScoreColor)
                         }
-                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
                     }
                 } else {
                     Text(game.isHomeGame ? "vs" : "@")
-                        .font(.system(size: 10))
-                        .foregroundStyle(.secondary)
+                        .font(.system(size: 10, weight: .medium, design: .rounded))
+                        .foregroundStyle(.primary.opacity(0.6))
                 }
 
                 Text(game.homeTeamAbbreviation)
-                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
 
                 Spacer()
             }
@@ -165,7 +174,7 @@ struct SmallGameRowView: View {
             // Status line
             HStack(spacing: 4) {
                 Text(game.statusDisplay)
-                    .font(.system(size: 10, weight: .medium, design: .monospaced))
+                    .font(.system(size: 10, weight: .semibold, design: .rounded))
                     .foregroundStyle(statusColor)
                 Spacer()
             }
@@ -176,13 +185,13 @@ struct SmallGameRowView: View {
     private var statusColor: Color {
         switch game.status {
         case .completed:
-            return .secondary
+            return .primary
         case .inProgress:
             return .green
         case .postponed, .canceled:
             return .orange
         case .scheduled:
-            return .secondary
+            return .primary
         }
     }
 }

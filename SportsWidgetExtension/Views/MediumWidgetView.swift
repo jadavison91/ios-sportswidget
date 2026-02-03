@@ -17,15 +17,14 @@ struct MediumWidgetView: View {
             HStack {
                 Image(systemName: "sportscourt.fill")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
-                Text("Your Games")
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.green)
+                Text("Gametime")
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundStyle(.primary)
                 Spacer()
                 Text(entry.formattedLastUpdated)
-                    .font(.system(size: 9))
-                    .foregroundStyle(.tertiary)
+                    .font(.system(size: 9, design: .rounded))
+                    .foregroundStyle(.secondary)
             }
 
             Divider()
@@ -142,44 +141,55 @@ struct CompactScorebugRow: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            // Away team
+            // League badge (left side)
+            Text(game.leagueBadge)
+                .font(.system(size: 8, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 4)
+                .padding(.vertical, 2)
+                .background(game.leagueColor)
+                .clipShape(RoundedRectangle(cornerRadius: 3))
+                .padding(.trailing, 6)
+
+            // Away team + score (fixed width for alignment)
             HStack(spacing: 4) {
                 Text(game.awayTeamAbbreviation)
-                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
                     .frame(width: 36, alignment: .leading)
 
+                // Always reserve space for score
                 if game.shouldShowScore, let score = game.awayScore {
                     Text("\(score)")
-                        .font(.system(size: 12, weight: .bold, design: .monospaced))
+                        .font(.system(size: 12, weight: .bold, design: .rounded))
                         .foregroundStyle(awayScoreColor)
                         .frame(width: 28, alignment: .trailing)
+                } else {
+                    Text("")
+                        .frame(width: 28)
                 }
             }
 
-            // Separator
-            if game.shouldShowScore {
-                Text("-")
-                    .font(.system(size: 10))
-                    .foregroundStyle(.tertiary)
-                    .padding(.horizontal, 4)
-            } else {
-                Text(game.isHomeGame ? "vs" : "@")
-                    .font(.system(size: 10))
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 6)
-            }
+            // Separator (always same width)
+            Text(game.shouldShowScore ? "-" : "@")
+                .font(.system(size: 10, weight: .medium, design: .rounded))
+                .foregroundStyle(.primary.opacity(0.6))
+                .frame(width: 20)
 
-            // Home team
+            // Home team + score (fixed width for alignment)
             HStack(spacing: 4) {
+                // Always reserve space for score
                 if game.shouldShowScore, let score = game.homeScore {
                     Text("\(score)")
-                        .font(.system(size: 12, weight: .bold, design: .monospaced))
+                        .font(.system(size: 12, weight: .bold, design: .rounded))
                         .foregroundStyle(homeScoreColor)
                         .frame(width: 28, alignment: .leading)
+                } else {
+                    Text("")
+                        .frame(width: 28)
                 }
 
                 Text(game.homeTeamAbbreviation)
-                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
                     .frame(width: 36, alignment: .trailing)
             }
 
@@ -187,9 +197,9 @@ struct CompactScorebugRow: View {
 
             // Status (FINAL, Q3, 7:30 PM, etc.)
             Text(game.statusDisplay)
-                .font(.system(size: 10, weight: .medium, design: .monospaced))
+                .font(.system(size: 10, weight: .semibold, design: .rounded))
                 .foregroundStyle(statusColor)
-                .frame(minWidth: 50, alignment: .trailing)
+                .frame(minWidth: 45, alignment: .trailing)
         }
         .contentTransition(.numericText())
     }
@@ -197,13 +207,13 @@ struct CompactScorebugRow: View {
     private var statusColor: Color {
         switch game.status {
         case .completed:
-            return .secondary
+            return .primary
         case .inProgress:
             return .green
         case .postponed, .canceled:
             return .orange
         case .scheduled:
-            return .secondary
+            return .primary
         }
     }
 }
