@@ -118,10 +118,16 @@ struct SportsScheduleWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: SportsScheduleProvider()) { entry in
             SportsWidgetEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+                .containerBackground(for: .widget) {
+                    if let customColor = AppGroup.widgetBackgroundPreset.color {
+                        customColor
+                    } else {
+                        Color.clear.background(.fill.tertiary)
+                    }
+                }
         }
-        .configurationDisplayName("Sports Schedule")
-        .description("View upcoming games for your favorite teams.")
+        .configurationDisplayName("Gametime")
+        .description("Live scores and upcoming games for your favorite teams.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
@@ -141,4 +147,29 @@ struct SportsScheduleWidget: Widget {
     ScheduleEntry.placeholder
     ScheduleEntry(date: Date(), games: [], lastUpdated: Date(), error: .noTeamsSelected)
     ScheduleEntry.empty
+}
+
+// MARK: - Widget Background Color Extension
+extension AppGroup.WidgetBackgroundPreset {
+    /// Returns the SwiftUI Color for this preset
+    var color: Color? {
+        switch self {
+        case .system:
+            return nil  // Use system default
+        case .darkBlue:
+            return Color(red: 0.1, green: 0.2, blue: 0.4)
+        case .darkGreen:
+            return Color(red: 0.1, green: 0.3, blue: 0.2)
+        case .darkPurple:
+            return Color(red: 0.25, green: 0.1, blue: 0.35)
+        case .darkRed:
+            return Color(red: 0.35, green: 0.1, blue: 0.1)
+        case .darkOrange:
+            return Color(red: 0.4, green: 0.2, blue: 0.1)
+        case .black:
+            return Color.black
+        case .charcoal:
+            return Color(red: 0.15, green: 0.15, blue: 0.15)
+        }
+    }
 }

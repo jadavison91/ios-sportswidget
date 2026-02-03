@@ -1,0 +1,69 @@
+<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E88E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0D47A1;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="clockGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E0E0E0;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="handGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6F00;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E65100;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="226" fill="url(#bgGradient)"/>
+
+  <!-- Clock face outer ring -->
+  <circle cx="512" cy="512" r="340" fill="none" stroke="url(#clockGradient)" stroke-width="40"/>
+
+  <!-- Clock face inner -->
+  <circle cx="512" cy="512" r="300" fill="url(#clockGradient)"/>
+
+  <!-- Clock tick marks -->
+  <!-- 12 o'clock -->
+  <rect x="497" y="240" width="30" height="60" rx="8" fill="#1E88E5"/>
+  <!-- 3 o'clock -->
+  <rect x="724" y="497" width="60" height="30" rx="8" fill="#1E88E5"/>
+  <!-- 6 o'clock -->
+  <rect x="497" y="724" width="30" height="60" rx="8" fill="#1E88E5"/>
+  <!-- 9 o'clock -->
+  <rect x="240" y="497" width="60" height="30" rx="8" fill="#1E88E5"/>
+
+  <!-- Small tick marks -->
+  <circle cx="512" cy="280" r="8" fill="#90CAF9"/>
+  <circle cx="632" cy="312" r="8" fill="#90CAF9"/>
+  <circle cx="712" cy="392" r="8" fill="#90CAF9"/>
+  <circle cx="744" cy="512" r="8" fill="#90CAF9"/>
+  <circle cx="712" cy="632" r="8" fill="#90CAF9"/>
+  <circle cx="632" cy="712" r="8" fill="#90CAF9"/>
+  <circle cx="512" cy="744" r="8" fill="#90CAF9"/>
+  <circle cx="392" cy="712" r="8" fill="#90CAF9"/>
+  <circle cx="312" cy="632" r="8" fill="#90CAF9"/>
+  <circle cx="280" cy="512" r="8" fill="#90CAF9"/>
+  <circle cx="312" cy="392" r="8" fill="#90CAF9"/>
+  <circle cx="392" cy="312" r="8" fill="#90CAF9"/>
+
+  <!-- Clock hands -->
+  <!-- Hour hand (pointing to ~10) -->
+  <rect x="505" y="340" width="14" height="180" rx="7" fill="#1E88E5" transform="rotate(-60, 512, 512)"/>
+
+  <!-- Minute hand (pointing to ~2) -->
+  <rect x="507" y="280" width="10" height="240" rx="5" fill="#0D47A1" transform="rotate(60, 512, 512)"/>
+
+  <!-- Second hand (orange accent) -->
+  <rect x="509" y="260" width="6" height="260" rx="3" fill="url(#handGradient)" transform="rotate(120, 512, 512)"/>
+
+  <!-- Center dot -->
+  <circle cx="512" cy="512" r="24" fill="url(#handGradient)"/>
+  <circle cx="512" cy="512" r="12" fill="#FFFFFF"/>
+
+  <!-- "GAME" text at top -->
+  <text x="512" y="430" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="800" fill="#1E88E5" text-anchor="middle">GAME</text>
+
+  <!-- "TIME" text at bottom -->
+  <text x="512" y="640" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="800" fill="#FF6F00" text-anchor="middle">TIME</text>
+</svg>

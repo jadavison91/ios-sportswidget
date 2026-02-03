@@ -110,6 +110,28 @@ struct SmallWidgetView: View {
 struct SmallGameRowView: View {
     let game: Game
 
+    /// Color for away team score - green if winning and game is final
+    private var awayScoreColor: Color {
+        guard game.status == .completed,
+              let awayScore = game.awayScore,
+              let homeScore = game.homeScore,
+              awayScore > homeScore else {
+            return .primary
+        }
+        return .green
+    }
+
+    /// Color for home team score - green if winning and game is final
+    private var homeScoreColor: Color {
+        guard game.status == .completed,
+              let awayScore = game.awayScore,
+              let homeScore = game.homeScore,
+              homeScore > awayScore else {
+            return .primary
+        }
+        return .green
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             // Teams and score
@@ -119,8 +141,14 @@ struct SmallGameRowView: View {
 
                 if game.shouldShowScore {
                     if let away = game.awayScore, let home = game.homeScore {
-                        Text("\(away)-\(home)")
-                            .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        HStack(spacing: 1) {
+                            Text("\(away)")
+                                .foregroundStyle(awayScoreColor)
+                            Text("-")
+                            Text("\(home)")
+                                .foregroundStyle(homeScoreColor)
+                        }
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
                     }
                 } else {
                     Text(game.isHomeGame ? "vs" : "@")

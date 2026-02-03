@@ -294,6 +294,26 @@ struct ScheduleEntry: TimelineEntry {
   - Logo URLs parsed from ESPN API response (fixes soccer team logos)
   - Game model includes `homeTeamLogoUrl` and `awayTeamLogoUrl` fields
 
+### Phase 6: Branding & Customization ✅ COMPLETE
+- [x] **6.1** App Rebranding to "Gametime"
+  - Renamed app display name to "Gametime"
+  - Updated widget configuration display names and descriptions
+  - Widget branding updated throughout
+- [x] **6.2** Winning Team Score Highlighting
+  - Winning team's score displays in green when game is final
+  - Applied to companion app scoreboard (ScoreboardGameRow)
+  - Applied to widget views (SmallWidgetView, MediumWidgetView)
+  - Tied games show both scores in default color
+- [x] **6.3** New App Icon
+  - Created clock-themed "GAMETIME" app icon
+  - Blue gradient background with clock face design
+  - "GAME" in blue, "TIME" in orange accent color
+- [x] **6.4** Widget Background Customization
+  - Added Settings tab in companion app
+  - 8 background color presets: System Default, Dark Blue, Dark Green, Dark Purple, Dark Red, Dark Orange, Black, Charcoal
+  - Preference stored in App Group UserDefaults
+  - Changes apply immediately via WidgetCenter.reloadAllTimelines()
+
 ## Testing Requirements
 
 ### Test Scenarios
@@ -310,6 +330,9 @@ struct ScheduleEntry: TimelineEntry {
 11. Game prioritization shows in-progress games first
 12. Companion app scoreboard displays all league games
 13. Team badges display correctly in upcoming games list
+14. Winning team score displays in green for final games
+15. Custom widget background color persists and displays correctly
+16. App displays "Gametime" branding consistently
 
 ### Edge Cases
 - No internet connection
@@ -323,6 +346,9 @@ struct ScheduleEntry: TimelineEntry {
 - More games than widget can display (prioritization kicks in)
 - Scoreboard with 0 games in a league
 - Team logo fails to load (fallback to abbreviation badge)
+- Tied game at final (no green highlighting for either team)
+- Custom background color readability in light vs dark mode
+- Widget background color not set (use default)
 
 ## Performance Targets
 - API response time: < 2 seconds

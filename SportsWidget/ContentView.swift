@@ -16,6 +16,7 @@ struct ContentView: View {
     enum Tab {
         case myTeams
         case scores
+        case settings
     }
 
     init(selectedGameID: Binding<String?> = .constant(nil)) {
@@ -35,6 +36,12 @@ struct ContentView: View {
                     Label("Scores", systemImage: "sportscourt.fill")
                 }
                 .tag(Tab.scores)
+
+            SettingsView()
+                .tabItem {
+                    Label("Settings", systemImage: "gear")
+                }
+                .tag(Tab.settings)
         }
     }
 }
@@ -202,37 +209,33 @@ struct MyTeamsView: View {
 
 // MARK: - Scoreboard View
 struct ScoreboardView: View {
-    @State private var selectedLeague: String = "nba"
+    @State private var selectedLeague: String = "eng.2"  // Default to first alphabetically (EFL)
     @State private var games: [Game] = []
     @State private var isLoading = false
     @State private var lastError: String?
 
-    private let leagues = ["nba", "nfl", "mlb", "nhl", "eng.1", "eng.2", "usa.usl.1"]
+    // Leagues sorted alphabetically by display name
+    private var sortedLeagues: [String] {
+        ["nba", "nfl", "mlb", "nhl", "eng.1", "eng.2", "usa.usl.1"]
+            .sorted { leagueDisplayName($0) < leagueDisplayName($1) }
+    }
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
                 // League Picker
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(leagues, id: \.self) { league in
-                            Button {
-                                selectedLeague = league
-                            } label: {
-                                Text(leagueDisplayName(league))
-                                    .font(.subheadline)
-                                    .fontWeight(selectedLeague == league ? .semibold : .regular)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
-                                    .background(selectedLeague == league ? Color.accentColor : Color.secondary.opacity(0.15))
-                                    .foregroundStyle(selectedLeague == league ? .white : .primary)
-                                    .clipShape(Capsule())
-                            }
-                            .buttonStyle(.plain)
+                HStack {
+                    Text("League:")
+                        .foregroundStyle(.secondary)
+                    Picker("League", selection: $selectedLeague) {
+                        ForEach(sortedLeagues, id: \.self) { league in
+                            Text(leagueDisplayName(league)).tag(league)
                         }
                     }
-                    .padding(.horizontal)
+                    .pickerStyle(.menu)
+                    Spacer()
                 }
+                .padding(.horizontal)
                 .padding(.vertical, 8)
                 .background(Color(.systemBackground))
 
@@ -339,6 +342,28 @@ struct ScoreboardView: View {
 struct ScoreboardGameRow: View {
     let game: Game
 
+    /// Color for away team score - green if winning and game is final
+    private var awayScoreColor: Color {
+        guard game.status == .completed,
+              let awayScore = game.awayScore,
+              let homeScore = game.homeScore,
+              awayScore > homeScore else {
+            return .primary
+        }
+        return .green
+    }
+
+    /// Color for home team score - green if winning and game is final
+    private var homeScoreColor: Color {
+        guard game.status == .completed,
+              let awayScore = game.awayScore,
+              let homeScore = game.homeScore,
+              homeScore > awayScore else {
+            return .primary
+        }
+        return .green
+    }
+
     var body: some View {
         VStack(spacing: 8) {
             // Teams and scores
@@ -366,6 +391,7 @@ struct ScoreboardGameRow: View {
                             .font(.title)
                             .fontWeight(.bold)
                             .monospacedDigit()
+                            .foregroundStyle(awayScoreColor)
 
                         Text("-")
                             .font(.title2)
@@ -375,6 +401,7 @@ struct ScoreboardGameRow: View {
                             .font(.title)
                             .fontWeight(.bold)
                             .monospacedDigit()
+                            .foregroundStyle(homeScoreColor)
                     }
                 } else {
                     VStack(spacing: 2) {
@@ -466,6 +493,12 @@ struct ScoreboardTeamLogo: View {
         return URL(string: urlString)
     }
 
+    /// Whether this is a soccer league (logos often have white backgrounds)
+    private var isSoccerLeague: Bool {
+        let soccerLeagues = ["eng.1", "eng.2", "usa.usl.1", "usa.1", "mex.1", "ger.1", "esp.1", "fra.1", "ita.1"]
+        return soccerLeagues.contains(league.lowercased()) || league.lowercased().contains("soccer")
+    }
+
     var body: some View {
         if let url = logoURL {
             AsyncImage(url: url) { phase in
@@ -473,10 +506,19 @@ struct ScoreboardTeamLogo: View {
                 case .empty:
                     placeholderView
                 case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: size, height: size)
+                    if isSoccerLeague {
+                        // Soccer logos often have white backgrounds - clip to circle
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: size, height: size)
+                            .clipShape(Circle())
+                    } else {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: size, height: size)
+                    }
                 case .failure:
                     placeholderView
                 @unknown default:
@@ -749,10 +791,8 @@ struct TeamRowView: View {
 struct TeamPickerView: View {
     @Binding var selectedTeams: [Team]
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedLeague: String = "nba"
+    @State private var selectedLeague: String = "eng.2"  // Default to first alphabetically (EFL)
     @State private var searchText: String = ""
-
-    private let leagues = ["nba", "nfl", "mlb", "nhl", "eng.1", "eng.2", "usa.usl.1"]
 
     private func leagueDisplayName(_ league: String) -> String {
         switch league {
@@ -761,6 +801,12 @@ struct TeamPickerView: View {
         case "usa.usl.1": return "USL"
         default: return league.uppercased()
         }
+    }
+
+    // Leagues sorted alphabetically by display name
+    private var sortedLeagues: [String] {
+        ["nba", "nfl", "mlb", "nhl", "eng.1", "eng.2", "usa.usl.1"]
+            .sorted { leagueDisplayName($0) < leagueDisplayName($1) }
     }
 
     var filteredTeams: [Team] {
@@ -778,26 +824,18 @@ struct TeamPickerView: View {
         NavigationStack {
             VStack(spacing: 0) {
                 // League Picker
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(leagues, id: \.self) { league in
-                            Button {
-                                selectedLeague = league
-                            } label: {
-                                Text(leagueDisplayName(league))
-                                    .font(.subheadline)
-                                    .fontWeight(selectedLeague == league ? .semibold : .regular)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
-                                    .background(selectedLeague == league ? Color.accentColor : Color.secondary.opacity(0.15))
-                                    .foregroundStyle(selectedLeague == league ? .white : .primary)
-                                    .clipShape(Capsule())
-                            }
-                            .buttonStyle(.plain)
+                HStack {
+                    Text("League:")
+                        .foregroundStyle(.secondary)
+                    Picker("League", selection: $selectedLeague) {
+                        ForEach(sortedLeagues, id: \.self) { league in
+                            Text(leagueDisplayName(league)).tag(league)
                         }
                     }
-                    .padding(.horizontal)
+                    .pickerStyle(.menu)
+                    Spacer()
                 }
+                .padding(.horizontal)
                 .padding(.vertical, 8)
 
                 // Teams List
@@ -879,6 +917,117 @@ struct TeamSelectionRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Settings View
+struct SettingsView: View {
+    @State private var selectedBackground: AppGroup.WidgetBackgroundPreset = AppGroup.widgetBackgroundPreset
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    ForEach(AppGroup.WidgetBackgroundPreset.allCases, id: \.self) { preset in
+                        Button {
+                            selectedBackground = preset
+                            AppGroup.widgetBackgroundPreset = preset
+                            // Reload widgets to apply the new background
+                            WidgetCenter.shared.reloadAllTimelines()
+                        } label: {
+                            HStack {
+                                // Color preview circle
+                                Circle()
+                                    .fill(preset.previewColor)
+                                    .frame(width: 28, height: 28)
+                                    .overlay {
+                                        if preset == .system {
+                                            Image(systemName: "gearshape.fill")
+                                                .font(.caption)
+                                                .foregroundStyle(.white)
+                                        }
+                                    }
+
+                                Text(preset.rawValue)
+                                    .foregroundStyle(.primary)
+
+                                Spacer()
+
+                                if selectedBackground == preset {
+                                    Image(systemName: "checkmark")
+                                        .foregroundStyle(.blue)
+                                        .fontWeight(.semibold)
+                                }
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                } header: {
+                    Text("Widget Background")
+                } footer: {
+                    Text("Choose a background color for your Gametime widgets. Changes apply immediately.")
+                }
+
+                Section {
+                    HStack {
+                        Text("Version")
+                        Spacer()
+                        Text("1.0")
+                            .foregroundStyle(.secondary)
+                    }
+                } header: {
+                    Text("About")
+                }
+            }
+            .navigationTitle("Settings")
+        }
+    }
+}
+
+// MARK: - Widget Background Color Extension
+extension AppGroup.WidgetBackgroundPreset {
+    /// Returns the SwiftUI Color for this preset
+    var color: Color? {
+        switch self {
+        case .system:
+            return nil  // Use system default
+        case .darkBlue:
+            return Color(red: 0.1, green: 0.2, blue: 0.4)
+        case .darkGreen:
+            return Color(red: 0.1, green: 0.3, blue: 0.2)
+        case .darkPurple:
+            return Color(red: 0.25, green: 0.1, blue: 0.35)
+        case .darkRed:
+            return Color(red: 0.35, green: 0.1, blue: 0.1)
+        case .darkOrange:
+            return Color(red: 0.4, green: 0.2, blue: 0.1)
+        case .black:
+            return Color.black
+        case .charcoal:
+            return Color(red: 0.15, green: 0.15, blue: 0.15)
+        }
+    }
+
+    /// Preview color for the settings picker (brighter for visibility)
+    var previewColor: Color {
+        switch self {
+        case .system:
+            return Color.gray
+        case .darkBlue:
+            return Color.blue
+        case .darkGreen:
+            return Color.green
+        case .darkPurple:
+            return Color.purple
+        case .darkRed:
+            return Color.red
+        case .darkOrange:
+            return Color.orange
+        case .black:
+            return Color.black
+        case .charcoal:
+            return Color(white: 0.3)
+        }
     }
 }
 

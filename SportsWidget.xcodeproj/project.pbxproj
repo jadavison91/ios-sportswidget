@@ -379,6 +379,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Gametime;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -424,6 +425,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Gametime;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -466,7 +468,7 @@
 				DEVELOPMENT_TEAM = 8Z4W48Y88P;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SportsWidgetExtension/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = SportsWidgetExtension;
+				INFOPLIST_KEY_CFBundleDisplayName = Gametime;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -499,7 +501,7 @@
 				DEVELOPMENT_TEAM = 8Z4W48Y88P;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SportsWidgetExtension/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = SportsWidgetExtension;
+				INFOPLIST_KEY_CFBundleDisplayName = Gametime;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				LD_RUNPATH_SEARCH_PATHS = (

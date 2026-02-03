@@ -118,6 +118,28 @@ struct MediumWidgetView: View {
 struct CompactScorebugRow: View {
     let game: Game
 
+    /// Color for away team score - green if winning and game is final
+    private var awayScoreColor: Color {
+        guard game.status == .completed,
+              let awayScore = game.awayScore,
+              let homeScore = game.homeScore,
+              awayScore > homeScore else {
+            return .primary
+        }
+        return .green
+    }
+
+    /// Color for home team score - green if winning and game is final
+    private var homeScoreColor: Color {
+        guard game.status == .completed,
+              let awayScore = game.awayScore,
+              let homeScore = game.homeScore,
+              homeScore > awayScore else {
+            return .primary
+        }
+        return .green
+    }
+
     var body: some View {
         HStack(spacing: 0) {
             // Away team
@@ -129,6 +151,7 @@ struct CompactScorebugRow: View {
                 if game.shouldShowScore, let score = game.awayScore {
                     Text("\(score)")
                         .font(.system(size: 12, weight: .bold, design: .monospaced))
+                        .foregroundStyle(awayScoreColor)
                         .frame(width: 28, alignment: .trailing)
                 }
             }
@@ -151,6 +174,7 @@ struct CompactScorebugRow: View {
                 if game.shouldShowScore, let score = game.homeScore {
                     Text("\(score)")
                         .font(.system(size: 12, weight: .bold, design: .monospaced))
+                        .foregroundStyle(homeScoreColor)
                         .frame(width: 28, alignment: .leading)
                 }
 

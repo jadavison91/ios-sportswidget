@@ -100,7 +100,7 @@ extension TeamEntity {
 
 // MARK: - Widget Configuration Intent
 struct SportsWidgetConfigurationIntent: WidgetConfigurationIntent {
-    static var title: LocalizedStringResource = "Configure Sports Widget"
+    static var title: LocalizedStringResource = "Configure Gametime"
     static var description = IntentDescription("Choose which teams to display in your widget.")
 
     @Parameter(title: "Teams", description: "Select teams to track")
@@ -198,10 +198,16 @@ struct ConfigurableSportsScheduleWidget: Widget {
             provider: ConfigurableSportsScheduleProvider()
         ) { entry in
             SportsWidgetEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+                .containerBackground(for: .widget) {
+                    if let customColor = AppGroup.widgetBackgroundPreset.color {
+                        customColor
+                    } else {
+                        Color.clear.background(.fill.tertiary)
+                    }
+                }
         }
-        .configurationDisplayName("Sports Schedule")
-        .description("View upcoming games for your favorite teams. Tap Edit to customize.")
+        .configurationDisplayName("Gametime")
+        .description("Live scores and upcoming games for your favorite teams.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }

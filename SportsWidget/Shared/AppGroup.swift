@@ -33,6 +33,22 @@ extension AppGroup {
         nonisolated static let use24HourTime = "use24HourTime"
         nonisolated static let maxGamesToShow = "maxGamesToShow"
         nonisolated static let scrollInterval = "scrollInterval"
+        nonisolated static let widgetBackgroundColor = "widgetBackgroundColor"
+    }
+}
+
+// MARK: - Widget Background Color Presets
+extension AppGroup {
+    /// Available background color presets for the widget
+    enum WidgetBackgroundPreset: String, CaseIterable, Sendable {
+        case system = "System Default"
+        case darkBlue = "Dark Blue"
+        case darkGreen = "Dark Green"
+        case darkPurple = "Dark Purple"
+        case darkRed = "Dark Red"
+        case darkOrange = "Dark Orange"
+        case black = "Black"
+        case charcoal = "Charcoal"
     }
 }
 
@@ -94,5 +110,19 @@ extension AppGroup {
             return value > 0 ? value : 10 // Default to 10 seconds
         }
         set { userDefaults.set(newValue, forKey: Keys.scrollInterval) }
+    }
+
+    /// Widget background color preset
+    static var widgetBackgroundPreset: WidgetBackgroundPreset {
+        get {
+            guard let rawValue = userDefaults.string(forKey: Keys.widgetBackgroundColor),
+                  let preset = WidgetBackgroundPreset(rawValue: rawValue) else {
+                return .system
+            }
+            return preset
+        }
+        set {
+            userDefaults.set(newValue.rawValue, forKey: Keys.widgetBackgroundColor)
+        }
     }
 }
