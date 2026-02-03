@@ -132,24 +132,24 @@ struct SmallGameRowView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            // Teams and score with league badge
-            HStack(spacing: 4) {
-                // League badge (left side)
-                Text(game.leagueBadge)
-                    .font(.system(size: 7, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 3)
-                    .padding(.vertical, 1)
-                    .background(game.leagueColor)
-                    .clipShape(RoundedRectangle(cornerRadius: 2))
+        VStack(alignment: .center, spacing: 4) {
+            // League badge (centered above game)
+            Text(game.leagueBadge)
+                .font(.system(size: 8, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(game.leagueColor)
+                .clipShape(RoundedRectangle(cornerRadius: 3))
 
+            // Teams and score (centered)
+            HStack(spacing: 4) {
                 Text(game.awayTeamAbbreviation)
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
 
                 if game.shouldShowScore {
                     if let away = game.awayScore, let home = game.homeScore {
-                        HStack(spacing: 1) {
+                        HStack(spacing: 2) {
                             Text("\(away)")
                                 .foregroundStyle(awayScoreColor)
                             Text("-")
@@ -157,28 +157,24 @@ struct SmallGameRowView: View {
                             Text("\(home)")
                                 .foregroundStyle(homeScoreColor)
                         }
-                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
                     }
                 } else {
-                    Text(game.isHomeGame ? "vs" : "@")
-                        .font(.system(size: 10, weight: .medium, design: .rounded))
+                    Text("@")
+                        .font(.system(size: 12, weight: .medium, design: .rounded))
                         .foregroundStyle(.primary.opacity(0.6))
                 }
 
                 Text(game.homeTeamAbbreviation)
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
-
-                Spacer()
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
             }
 
-            // Status line
-            HStack(spacing: 4) {
-                Text(game.statusDisplay)
-                    .font(.system(size: 10, weight: .semibold, design: .rounded))
-                    .foregroundStyle(statusColor)
-                Spacer()
-            }
+            // Status (centered)
+            Text(game.statusDisplay)
+                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                .foregroundStyle(statusColor)
         }
+        .frame(maxWidth: .infinity)
         .contentTransition(.numericText())
     }
 
