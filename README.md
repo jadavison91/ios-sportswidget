@@ -172,6 +172,8 @@ Planned improvements for future releases:
 |-------------|-------------|--------|
 | **Next Game Only** | Widget shows only the next upcoming game per team (instead of all games in 7-day window) | Planned |
 | **12-Hour Score Visibility** | Keep final scores visible for 12 hours after game completion (instead of until midnight) | Planned |
+| **Widget Configuration** | AppIntents-based per-widget team selection | Planned |
+| **Performance Optimization** | Profiling and optimization for battery and responsiveness | Planned |
 
 See [sports_widget_spec.md](docs/sports_widget_spec.md) for detailed implementation plans.
 

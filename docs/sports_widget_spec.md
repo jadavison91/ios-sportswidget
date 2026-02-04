@@ -251,12 +251,8 @@ struct ScheduleEntry: TimelineEntry {
 - [x] Implement proper error states
 - [x] Add light/dark mode support
 
-### Phase 3: Polish
-- [ ] Add animations for widget updates
-- [ ] Add widget configuration options (AppIntents-based)
-- [ ] Performance optimization
-- [ ] Testing on various iPhone models
-- [ ] Customizable color schemes
+### Phase 3: Polish ✅ COMPLETE
+- [x] Customizable color schemes (completed in Phase 6.4)
 
 ### Phase 4: Live Scores & Enhanced Display ✅ COMPLETE
 - [x] **4.1** Update refresh interval from daily to 15 minutes
@@ -352,6 +348,39 @@ These enhancements track ongoing improvements after the v1.0.0 release.
 - Add `completedAt: Date?` field to Game model or track separately
 - Modify game filtering logic to use 12-hour window instead of midnight cutoff
 - Consider timezone handling for accurate 12-hour calculation
+
+### Enhancement 3: Widget Configuration Options (AppIntents)
+**Status**: Planned
+
+**Problem**: Users cannot customize which teams appear on individual widgets. All widgets show the same games based on global team selection.
+
+**Solution**:
+- Implement AppIntents-based widget configuration
+- Allow users to select specific teams per widget instance
+- Enable different widgets to show different team combinations
+
+**Implementation Notes**:
+- Use `AppIntentConfiguration` instead of `StaticConfiguration`
+- Create `SelectTeamsIntent` with team selection parameter
+- Migrate from shared UserDefaults to per-widget configuration
+- Maintain backward compatibility with existing widgets
+
+### Enhancement 4: Performance Optimization
+**Status**: Planned
+
+**Problem**: General performance review needed to ensure optimal battery usage and responsiveness.
+
+**Solution**:
+- Profile API call frequency and caching efficiency
+- Optimize image loading and caching for team logos
+- Review memory usage in widget extension
+- Ensure efficient data sharing between app and widget
+
+**Implementation Notes**:
+- Use Instruments to profile CPU, memory, and network usage
+- Implement more aggressive caching where appropriate
+- Consider lazy loading for scoreboard with many games
+- Review background refresh impact on battery
 
 ---
 
