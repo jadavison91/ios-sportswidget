@@ -314,6 +314,47 @@ struct ScheduleEntry: TimelineEntry {
   - Preference stored in App Group UserDefaults
   - Changes apply immediately via WidgetCenter.reloadAllTimelines()
 
+---
+
+## Enhancements (Post-Release)
+
+These enhancements track ongoing improvements after the v1.0.0 release.
+
+### Enhancement 1: Widget Shows Only Next Game Per Team
+**Status**: Planned
+
+**Problem**: When a team has multiple games in the ESPN API's 7-day window, all games appear in the widget, taking up valuable space.
+
+**Solution**:
+- Widget displays only the **next upcoming game** for each followed team
+- If a game is in-progress or recently completed (within 12 hours), show that game
+- Once a game is 12+ hours past completion, show the next scheduled game
+- Companion app continues to show all upcoming games for full visibility
+
+**Implementation Notes**:
+- Filter logic in widget's TimelineProvider
+- Group games by team, select most relevant game per team
+- Priority: in-progress → completed (within 12h) → next scheduled
+
+### Enhancement 2: Extended Final Score Visibility (12 Hours)
+**Status**: Planned
+
+**Problem**: Currently, completed game scores are visible until midnight local time. If a game finishes late (e.g., West Coast games ending at 11 PM EST), users may miss the final score.
+
+**Solution**:
+- Keep completed game scores visible for **12 hours** after the game ends
+- Use the game's actual completion time, not just the date
+- After 12 hours, the game is removed from widget display
+- Companion app behavior unchanged (shows all games for the current day)
+
+**Implementation Notes**:
+- Store game completion timestamp (may need to capture when status changes to "completed")
+- Add `completedAt: Date?` field to Game model or track separately
+- Modify game filtering logic to use 12-hour window instead of midnight cutoff
+- Consider timezone handling for accurate 12-hour calculation
+
+---
+
 ## Testing Requirements
 
 ### Test Scenarios

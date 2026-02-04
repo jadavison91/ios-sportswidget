@@ -164,6 +164,17 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - Some team logos (especially smaller leagues) may not be available from ESPN
 - The ESPN API is unofficial and may change without notice
 
+## Roadmap / Enhancements
+
+Planned improvements for future releases:
+
+| Enhancement | Description | Status |
+|-------------|-------------|--------|
+| **Next Game Only** | Widget shows only the next upcoming game per team (instead of all games in 7-day window) | Planned |
+| **12-Hour Score Visibility** | Keep final scores visible for 12 hours after game completion (instead of until midnight) | Planned |
+
+See [sports_widget_spec.md](docs/sports_widget_spec.md) for detailed implementation plans.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
