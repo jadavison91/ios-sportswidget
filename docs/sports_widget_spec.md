@@ -316,8 +316,8 @@ struct ScheduleEntry: TimelineEntry {
 
 These enhancements track ongoing improvements after the v1.0.0 release.
 
-### Enhancement 1: Widget Shows Only Next Game Per Team
-**Status**: Planned
+### Enhancement 1: Widget Shows Only Next Game Per Team ✅ COMPLETE
+**Status**: Complete
 
 **Problem**: When a team has multiple games in the ESPN API's 7-day window, all games appear in the widget, taking up valuable space.
 
@@ -327,10 +327,15 @@ These enhancements track ongoing improvements after the v1.0.0 release.
 - Once a game is 12+ hours past completion, show the next scheduled game
 - Companion app continues to show all upcoming games for full visibility
 
-**Implementation Notes**:
-- Filter logic in widget's TimelineProvider
-- Group games by team, select most relevant game per team
-- Priority: in-progress → completed (within 12h) → next scheduled
+**Implementation**:
+- Added `selectNextGamePerTeam(from:)` in `SportsWidgetExtension.swift`
+- Groups games by `userTeamAbbreviation`
+- `selectBestGame(from:now:twelveHoursAgo:)` selects per-team game with priority:
+  1. In-progress games (highest priority)
+  2. Completed games within 12 hours (most recent first)
+  3. Next scheduled game (earliest first)
+  4. Fallback to any upcoming game
+- Companion app unchanged - still shows all games via direct API fetch
 
 ### Enhancement 2: Extended Final Score Visibility (12 Hours)
 **Status**: Planned
