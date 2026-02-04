@@ -15,6 +15,7 @@ struct ScheduleEntry: TimelineEntry {
     let error: WidgetError?
     let pageIndex: Int
     let totalPages: Int
+    let logoData: [String: Data]  // Maps logo URL to image data for widget display
 
     enum WidgetError: String, Codable {
         case noTeamsSelected = "No teams selected"
@@ -22,13 +23,14 @@ struct ScheduleEntry: TimelineEntry {
         case noGames = "No upcoming games"
     }
 
-    init(date: Date, games: [Game], lastUpdated: Date, error: WidgetError? = nil, pageIndex: Int = 0, totalPages: Int = 1) {
+    init(date: Date, games: [Game], lastUpdated: Date, error: WidgetError? = nil, pageIndex: Int = 0, totalPages: Int = 1, logoData: [String: Data] = [:]) {
         self.date = date
         self.games = games
         self.lastUpdated = lastUpdated
         self.error = error
         self.pageIndex = pageIndex
         self.totalPages = totalPages
+        self.logoData = logoData
     }
 
     static var placeholder: ScheduleEntry {

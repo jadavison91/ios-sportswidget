@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 import WidgetKit
 
 struct SmallWidgetView: View {
@@ -62,7 +63,7 @@ struct SmallWidgetView: View {
     @ViewBuilder
     private var gamesListView: some View {
         if let game = entry.games.first {
-            SmallGameRowView(game: game)
+            SmallGameRowView(game: game, logoData: entry.logoData)
         }
     }
 
@@ -112,6 +113,7 @@ struct SmallWidgetView: View {
 // MARK: - Small Widget Game Row View
 struct SmallGameRowView: View {
     let game: Game
+    let logoData: [String: Data]
 
     private var colorPalette: AppGroup.WidgetBackgroundPreset {
         AppGroup.widgetBackgroundPreset
@@ -139,6 +141,24 @@ struct SmallGameRowView: View {
         return .green
     }
 
+    /// Creates an Image from logo data, or falls back to abbreviation text
+    @ViewBuilder
+    private func teamLogo(url: String?, abbreviation: String) -> some View {
+        if let urlString = url,
+           let data = logoData[urlString],
+           let uiImage = UIImage(data: data) {
+            Image(uiImage: uiImage)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 28, height: 28)
+        } else {
+            // Fallback to abbreviation
+            Text(abbreviation)
+                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .foregroundStyle(colorPalette.foregroundColor)
+        }
+    }
+
     var body: some View {
         VStack(alignment: .center, spacing: 4) {
             // League badge (centered above game)
@@ -150,12 +170,12 @@ struct SmallGameRowView: View {
                 .background(game.leagueColor)
                 .clipShape(RoundedRectangle(cornerRadius: 3))
 
-            // Teams and score (centered)
-            HStack(spacing: 4) {
-                Text(game.awayTeamAbbreviation)
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
-                    .foregroundStyle(colorPalette.foregroundColor)
+            // Teams with logos and score (centered)
+            HStack(spacing: 8) {
+                // Away team logo
+                teamLogo(url: game.awayTeamLogoUrl, abbreviation: game.awayTeamAbbreviation)
 
+                // Score or @ symbol
                 if game.shouldShowScore {
                     if let away = game.awayScore, let home = game.homeScore {
                         HStack(spacing: 2) {
@@ -166,17 +186,16 @@ struct SmallGameRowView: View {
                             Text("\(home)")
                                 .foregroundStyle(homeScoreColor)
                         }
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
                     }
                 } else {
                     Text("@")
-                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                        .font(.system(size: 14, weight: .medium, design: .rounded))
                         .foregroundStyle(colorPalette.secondaryForegroundColor)
                 }
 
-                Text(game.homeTeamAbbreviation)
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
-                    .foregroundStyle(colorPalette.foregroundColor)
+                // Home team logo
+                teamLogo(url: game.homeTeamLogoUrl, abbreviation: game.homeTeamAbbreviation)
             }
 
             // Status (centered)

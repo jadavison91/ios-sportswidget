@@ -85,11 +85,45 @@ struct SportsScheduleProvider: TimelineProvider {
         let maxGames = maxGamesForWidget(family)
         let games = Array(filteredGames.prefix(maxGames))
 
+        // For small widget, pre-fetch team logos
+        var logoData: [String: Data] = [:]
+        if family == .systemSmall, let game = games.first {
+            logoData = await fetchLogoData(for: game)
+        }
+
         return ScheduleEntry(
             date: Date(),
             games: games,
-            lastUpdated: lastUpdated
+            lastUpdated: lastUpdated,
+            logoData: logoData
         )
+    }
+
+    /// Fetches logo image data for a game's teams
+    private func fetchLogoData(for game: Game) async -> [String: Data] {
+        var logoData: [String: Data] = [:]
+
+        // Fetch away team logo
+        if let urlString = game.awayTeamLogoUrl, let url = URL(string: urlString) {
+            if let data = try? await fetchImageData(from: url) {
+                logoData[urlString] = data
+            }
+        }
+
+        // Fetch home team logo
+        if let urlString = game.homeTeamLogoUrl, let url = URL(string: urlString) {
+            if let data = try? await fetchImageData(from: url) {
+                logoData[urlString] = data
+            }
+        }
+
+        return logoData
+    }
+
+    /// Downloads image data from a URL
+    private func fetchImageData(from url: URL) async throws -> Data {
+        let (data, _) = try await URLSession.shared.data(from: url)
+        return data
     }
 
     /// Selects only the most relevant game per team for widget display
