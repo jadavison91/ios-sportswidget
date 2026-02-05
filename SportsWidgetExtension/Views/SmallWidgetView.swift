@@ -17,19 +17,16 @@ struct SmallWidgetView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            // Header
-            HStack {
-                Image(systemName: "sportscourt.fill")
-                    .font(.caption)
-                    .foregroundStyle(colorPalette.accentColor)
-                Text("Gametime")
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
-                    .foregroundStyle(colorPalette.foregroundColor)
-                Spacer()
+        VStack(alignment: .center, spacing: 0) {
+            // Two-tone GAMETIME title
+            HStack(spacing: 0) {
+                Text("GAME")
+                    .foregroundStyle(colorPalette.gameColor)
+                Text("TIME")
+                    .foregroundStyle(colorPalette.timeColor)
             }
-
-            Spacer(minLength: 4)
+            .font(.system(size: 12, weight: .heavy, design: .rounded))
+            .padding(.top, 8)
 
             // Content
             if let error = entry.error {
@@ -39,15 +36,7 @@ struct SmallWidgetView: View {
             } else {
                 gamesListView
             }
-
-            Spacer(minLength: 4)
-
-            // Footer
-            Text(entry.formattedLastUpdated)
-                .font(.system(size: 9, design: .rounded))
-                .foregroundStyle(colorPalette.secondaryForegroundColor)
         }
-        .padding(12)
         .widgetURL(widgetDeepLink)
     }
 
@@ -150,35 +139,29 @@ struct SmallGameRowView: View {
             Image(uiImage: uiImage)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 28, height: 28)
+                .frame(width: 44, height: 44)
         } else {
             // Fallback to abbreviation
             Text(abbreviation)
-                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .font(.system(size: 16, weight: .bold, design: .rounded))
                 .foregroundStyle(colorPalette.foregroundColor)
+                .frame(width: 44, height: 44)
         }
     }
 
     var body: some View {
-        VStack(alignment: .center, spacing: 4) {
-            // League badge (centered above game)
-            Text(game.leagueBadge)
-                .font(.system(size: 8, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
-                .background(game.leagueColor)
-                .clipShape(RoundedRectangle(cornerRadius: 3))
+        VStack(alignment: .center, spacing: 0) {
+            Spacer()
 
             // Teams with logos and score (centered)
-            HStack(spacing: 8) {
+            HStack(spacing: 12) {
                 // Away team logo
                 teamLogo(url: game.awayTeamLogoUrl, abbreviation: game.awayTeamAbbreviation)
 
                 // Score or @ symbol
                 if game.shouldShowScore {
                     if let away = game.awayScore, let home = game.homeScore {
-                        HStack(spacing: 2) {
+                        HStack(spacing: 3) {
                             Text("\(away)")
                                 .foregroundStyle(awayScoreColor)
                             Text("-")
@@ -186,11 +169,11 @@ struct SmallGameRowView: View {
                             Text("\(home)")
                                 .foregroundStyle(homeScoreColor)
                         }
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
                     }
                 } else {
                     Text("@")
-                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                        .font(.system(size: 18, weight: .medium, design: .rounded))
                         .foregroundStyle(colorPalette.secondaryForegroundColor)
                 }
 
@@ -198,12 +181,21 @@ struct SmallGameRowView: View {
                 teamLogo(url: game.homeTeamLogoUrl, abbreviation: game.homeTeamAbbreviation)
             }
 
-            // Status (centered)
-            Text(game.statusDisplay)
-                .font(.system(size: 11, weight: .semibold, design: .rounded))
-                .foregroundStyle(statusColor)
+            Spacer()
+
+            // League status bar (full width with league color)
+            HStack(spacing: 6) {
+                Text(game.leagueBadge)
+                    .font(.system(size: 10, weight: .bold, design: .rounded))
+                Text(game.statusDisplay)
+                    .font(.system(size: 10, weight: .semibold, design: .rounded))
+            }
+            .foregroundStyle(.white)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 4)
+            .background(game.leagueColor)
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .contentTransition(.numericText())
     }
 

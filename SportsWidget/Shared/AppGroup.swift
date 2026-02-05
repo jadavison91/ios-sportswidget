@@ -34,6 +34,7 @@ extension AppGroup {
         nonisolated static let maxGamesToShow = "maxGamesToShow"
         nonisolated static let scrollInterval = "scrollInterval"
         nonisolated static let widgetBackgroundColor = "widgetBackgroundColor"
+        nonisolated static let smallWidgetTeamId = "smallWidgetTeamId"
     }
 }
 
@@ -123,6 +124,36 @@ extension AppGroup {
         }
         set {
             userDefaults.set(newValue.rawValue, forKey: Keys.widgetBackgroundColor)
+        }
+    }
+
+    /// Team ID for small widget display (format: "teamId|league")
+    /// Returns nil to show "next game" across all teams
+    static var smallWidgetTeamId: String? {
+        get {
+            userDefaults.string(forKey: Keys.smallWidgetTeamId)
+        }
+        set {
+            if let value = newValue {
+                userDefaults.set(value, forKey: Keys.smallWidgetTeamId)
+            } else {
+                userDefaults.removeObject(forKey: Keys.smallWidgetTeamId)
+            }
+        }
+    }
+
+    /// Gets the selected team for small widget from the My Teams list
+    static var smallWidgetTeam: Team? {
+        get {
+            guard let teamId = smallWidgetTeamId else { return nil }
+            return selectedTeams.first { "\($0.id)|\($0.league)" == teamId }
+        }
+        set {
+            if let team = newValue {
+                smallWidgetTeamId = "\(team.id)|\(team.league)"
+            } else {
+                smallWidgetTeamId = nil
+            }
         }
     }
 }

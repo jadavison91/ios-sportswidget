@@ -323,38 +323,76 @@ These enhancements track ongoing improvements after the v1.0.0 release.
 
 **Solution**:
 - Widget displays only the **next upcoming game** for each followed team
-- If a game is in-progress or recently completed (within 12 hours), show that game
-- Once a game is 12+ hours past completion, show the next scheduled game
+- If a game is in-progress or recently completed (within 16 hours), show that game
+- Once a game is 16+ hours past completion, show the next scheduled game
 - Companion app continues to show all upcoming games for full visibility
 
 **Implementation**:
 - Added `selectNextGamePerTeam(from:)` in `SportsWidgetExtension.swift`
 - Groups games by `userTeamAbbreviation`
-- `selectBestGame(from:now:twelveHoursAgo:)` selects per-team game with priority:
+- `selectBestGame(from:now:sixteenHoursAgo:)` selects per-team game with priority:
   1. In-progress games (highest priority)
-  2. Completed games within 12 hours (most recent first)
+  2. Completed games within 16 hours (most recent first)
   3. Next scheduled game (earliest first)
   4. Fallback to any upcoming game
 - Companion app unchanged - still shows all games via direct API fetch
 
-### Enhancement 2: Extended Final Score Visibility (12 Hours)
-**Status**: Planned
+### Enhancement 2: Extended Final Score Visibility (16 Hours) ✅ COMPLETE
+**Status**: Complete
 
-**Problem**: Currently, completed game scores are visible until midnight local time. If a game finishes late (e.g., West Coast games ending at 11 PM EST), users may miss the final score.
+**Problem**: Currently, completed game scores are visible until midnight local time. If a game finishes late (e.g., West Coast games ending at 11 PM EST), users may miss the final score the next morning.
 
 **Solution**:
-- Keep completed game scores visible for **12 hours** after the game ends
-- Use the game's actual completion time, not just the date
-- After 12 hours, the game is removed from widget display
+- Keep completed game scores visible for **16 hours** after the game starts
+- Uses game start time as proxy (since ESPN API doesn't provide completion time)
+- After 16 hours, the game is removed from widget display
 - Companion app behavior unchanged (shows all games for the current day)
 
-**Implementation Notes**:
-- Store game completion timestamp (may need to capture when status changes to "completed")
-- Add `completedAt: Date?` field to Game model or track separately
-- Modify game filtering logic to use 12-hour window instead of midnight cutoff
-- Consider timezone handling for accurate 12-hour calculation
+**Implementation**:
+- Added `shouldShowGame(_ game: Game) -> Bool` in `DataCache.swift` (both targets)
+- Game visibility rules:
+  - In-progress: Always visible
+  - Scheduled: Visible if start time is in the future
+  - Completed/Postponed/Canceled: Visible for 16 hours after start time
+- Updated `loadGames()` and `loadFromUserDefaults()` to use new filtering
+- 16-hour window ensures morning visibility for late-night games (e.g., 10 PM game visible until 2 PM next day)
 
-### Enhancement 3: Widget Configuration Options (AppIntents)
+### Enhancement 3: Small Widget Redesign ✅ COMPLETE
+**Status**: Complete
+
+**Problem**: Small widget showed minimal information with basic text display.
+
+**Solution**:
+- Display team logos instead of abbreviations
+- Two-tone "GAMETIME" title (blue "GAME" + orange "TIME")
+- Full-width league-colored status bar at bottom
+- Setting to select specific team for small widget display
+
+**Implementation**:
+- Pre-fetch logo images in TimelineProvider (AsyncImage doesn't work in widgets)
+- Added `logoData: [String: Data]` to ScheduleEntry for widget image storage
+- Added `fetchLogoData(for:)` and `fetchImageData(from:)` to fetch logos during timeline generation
+- Added `gameColor` and `timeColor` to WidgetBackgroundPreset for two-tone title
+- Colors adapt to each background preset (system, dark blue, dark green, etc.)
+- League status bar uses `game.leagueColor` for full-width background
+- Added `smallWidgetTeamId` setting in AppGroup for team selection
+- Team picker in Settings allows selecting specific team or "Next Game (All Teams)"
+
+### Enhancement 4: Medium Widget Title Update ✅ COMPLETE
+**Status**: Complete
+
+**Problem**: Medium widget title used plain text with icon.
+
+**Solution**:
+- Two-tone "GAMETIME" title matching small widget style
+- Removed sportscourt icon
+- All other elements remain unchanged
+
+**Implementation**:
+- Updated header in `MediumWidgetView.swift`
+- Uses same `gameColor` and `timeColor` properties from WidgetBackgroundPreset
+
+### Enhancement 5: Widget Configuration Options (AppIntents)
 **Status**: Planned
 
 **Problem**: Users cannot customize which teams appear on individual widgets. All widgets show the same games based on global team selection.
@@ -370,7 +408,7 @@ These enhancements track ongoing improvements after the v1.0.0 release.
 - Migrate from shared UserDefaults to per-widget configuration
 - Maintain backward compatibility with existing widgets
 
-### Enhancement 4: Performance Optimization
+### Enhancement 6: Performance Optimization
 **Status**: Planned
 
 **Problem**: General performance review needed to ensure optimal battery usage and responsiveness.

@@ -923,10 +923,43 @@ struct TeamSelectionRow: View {
 // MARK: - Settings View
 struct SettingsView: View {
     @State private var selectedBackground: AppGroup.WidgetBackgroundPreset = AppGroup.widgetBackgroundPreset
+    @State private var selectedTeams: [Team] = AppGroup.selectedTeams
+    @State private var smallWidgetTeamId: String = AppGroup.smallWidgetTeamId ?? "all"
 
     var body: some View {
         NavigationStack {
             List {
+                // Small Widget Team Selection
+                Section {
+                    Picker("Team", selection: $smallWidgetTeamId) {
+                        Text("Next Game (All Teams)")
+                            .tag("all")
+
+                        ForEach(selectedTeams, id: \.id) { team in
+                            HStack {
+                                Text(team.abbreviation)
+                                    .fontWeight(.bold)
+                                Text("- \(team.name)")
+                                    .foregroundStyle(.secondary)
+                            }
+                            .tag("\(team.id)|\(team.league)")
+                        }
+                    }
+                    .onChange(of: smallWidgetTeamId) { _, newValue in
+                        if newValue == "all" {
+                            AppGroup.smallWidgetTeamId = nil
+                        } else {
+                            AppGroup.smallWidgetTeamId = newValue
+                        }
+                        WidgetCenter.shared.reloadAllTimelines()
+                    }
+                } header: {
+                    Text("Small Widget")
+                } footer: {
+                    Text("Choose which team to display on the small widget, or show the next game across all your teams.")
+                }
+
+                // Widget Background
                 Section {
                     ForEach(AppGroup.WidgetBackgroundPreset.allCases, id: \.self) { preset in
                         Button {
@@ -980,6 +1013,11 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Settings")
+            .onAppear {
+                // Refresh teams list in case it changed
+                selectedTeams = AppGroup.selectedTeams
+                smallWidgetTeamId = AppGroup.smallWidgetTeamId ?? "all"
+            }
         }
     }
 }

@@ -5,11 +5,13 @@ An iOS home screen widget that displays upcoming games, live scores, and final r
 ## Features
 
 ### Home Screen Widget
-- **Small Widget**: Shows the next upcoming game for your favorite teams
+- **Small Widget**: Shows team logos, scores, and league-colored status bar for your selected team
 - **Medium Widget**: Displays up to 4 games with compact scorebug format
+- **Two-Tone Branding**: "GAMETIME" title with blue "GAME" and orange "TIME"
 - **Live Scores**: Updates every 15 minutes with current scores and game status
 - **Smart Prioritization**: In-progress games shown first, then scheduled, then completed
-- **Game Day Persistence**: Completed game scores remain visible until midnight
+- **Extended Score Visibility**: Completed game scores remain visible for 16 hours
+- **Customizable Backgrounds**: 8 color presets (System, Dark Blue, Dark Green, Dark Purple, Dark Red, Dark Orange, Black, Charcoal)
 
 ### Companion App
 - **My Teams Tab**: View your selected teams and their upcoming games
@@ -166,12 +168,14 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Roadmap / Enhancements
 
-Planned improvements for future releases:
+Completed and planned improvements:
 
 | Enhancement | Description | Status |
 |-------------|-------------|--------|
-| **Next Game Only** | Widget shows only the next upcoming game per team (instead of all games in 7-day window) | Complete |
-| **12-Hour Score Visibility** | Keep final scores visible for 12 hours after game completion (instead of until midnight) | Planned |
+| **Next Game Only** | Widget shows only the next upcoming game per team (instead of all games in 7-day window) | ✅ Complete |
+| **16-Hour Score Visibility** | Keep final scores visible for 16 hours after game start (ensures morning visibility for late games) | ✅ Complete |
+| **Small Widget Redesign** | Team logos, two-tone title, league-colored status bar, team selection setting | ✅ Complete |
+| **Medium Widget Title** | Two-tone "GAMETIME" branding matching small widget | ✅ Complete |
 | **Widget Configuration** | AppIntents-based per-widget team selection | Planned |
 | **Performance Optimization** | Profiling and optimization for battery and responsiveness | Planned |
 

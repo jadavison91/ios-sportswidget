@@ -19,12 +19,13 @@ struct MediumWidgetView: View {
         VStack(alignment: .leading, spacing: 6) {
             // Header
             HStack {
-                Image(systemName: "sportscourt.fill")
-                    .font(.caption)
-                    .foregroundStyle(colorPalette.accentColor)
-                Text("Gametime")
-                    .font(.system(size: 13, weight: .bold, design: .rounded))
-                    .foregroundStyle(colorPalette.foregroundColor)
+                HStack(spacing: 0) {
+                    Text("GAME")
+                        .foregroundStyle(colorPalette.gameColor)
+                    Text("TIME")
+                        .foregroundStyle(colorPalette.timeColor)
+                }
+                .font(.system(size: 13, weight: .heavy, design: .rounded))
                 Spacer()
                 Text(entry.formattedLastUpdated)
                     .font(.system(size: 9, design: .rounded))

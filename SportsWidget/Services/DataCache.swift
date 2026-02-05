@@ -44,16 +44,13 @@ actor DataCache {
     }
 
     /// Loads games from cache (memory -> file -> UserDefaults)
-    /// Includes today's completed games for game day persistence
+    /// Keeps completed games visible for 12 hours after start time
     func loadGames() -> [Game] {
-        let startOfToday = Calendar.current.startOfDay(for: Date())
-
         // Check memory cache first (fastest)
         if let cached = memoryCache,
            let timestamp = memoryCacheTimestamp,
            Date().timeIntervalSince(timestamp) < memoryCacheMaxAge {
-            // Keep games from today onwards (including completed games from today)
-            let filtered = cached.filter { $0.startTime >= startOfToday }
+            let filtered = cached.filter { shouldShowGame($0) }
             if !filtered.isEmpty {
                 return filtered
             }
@@ -66,8 +63,7 @@ actor DataCache {
             do {
                 let data = try Data(contentsOf: fileURL)
                 let games = try JSONDecoder().decode([Game].self, from: data)
-                // Keep games from today onwards (including completed games from today)
-                let filtered = games.filter { $0.startTime >= startOfToday }
+                let filtered = games.filter { shouldShowGame($0) }
                 memoryCache = filtered
                 memoryCacheTimestamp = Date()
                 return filtered
@@ -83,6 +79,28 @@ actor DataCache {
             memoryCacheTimestamp = Date()
         }
         return games
+    }
+
+    /// Determines if a game should be shown based on status and time
+    /// - Completed games: visible for 16 hours after start time
+    /// - In-progress games: always visible
+    /// - Scheduled games: visible if start time is in the future
+    /// - Postponed/Canceled: visible for 16 hours after original start time
+    private func shouldShowGame(_ game: Game) -> Bool {
+        let now = Date()
+        let sixteenHoursAgo = now.addingTimeInterval(-16 * 60 * 60)
+
+        switch game.status {
+        case .completed, .postponed, .canceled:
+            // Show completed/postponed/canceled games for 16 hours after start
+            return game.startTime >= sixteenHoursAgo
+        case .inProgress:
+            // Always show in-progress games
+            return true
+        case .scheduled:
+            // Show scheduled games that haven't started yet
+            return game.startTime >= now
+        }
     }
 
     /// Returns the date of the last successful fetch
@@ -132,9 +150,8 @@ actor DataCache {
               let games = try? JSONDecoder().decode([Game].self, from: data) else {
             return []
         }
-        // Keep games from today onwards (including completed games from today)
-        let startOfToday = Calendar.current.startOfDay(for: Date())
-        return games.filter { $0.startTime >= startOfToday }
+        // Filter using 12-hour visibility rules
+        return games.filter { shouldShowGame($0) }
     }
 }
 

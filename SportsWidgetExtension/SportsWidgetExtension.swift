@@ -79,7 +79,14 @@ struct SportsScheduleProvider: TimelineProvider {
         }
 
         // Filter to show only the next/most relevant game per team
-        let filteredGames = selectNextGamePerTeam(from: allGames)
+        var filteredGames = selectNextGamePerTeam(from: allGames)
+
+        // For small widget, filter to selected team if one is chosen
+        if family == .systemSmall, let selectedTeam = AppGroup.smallWidgetTeam {
+            filteredGames = filteredGames.filter {
+                $0.userTeamAbbreviation.lowercased() == selectedTeam.abbreviation.lowercased()
+            }
+        }
 
         // Limit to what the widget can display
         let maxGames = maxGamesForWidget(family)
@@ -127,10 +134,10 @@ struct SportsScheduleProvider: TimelineProvider {
     }
 
     /// Selects only the most relevant game per team for widget display
-    /// Priority: in-progress → completed (within 12h) → next scheduled
+    /// Priority: in-progress → completed (within 16h) → next scheduled
     private func selectNextGamePerTeam(from games: [Game]) -> [Game] {
         let now = Date()
-        let twelveHoursAgo = now.addingTimeInterval(-12 * 60 * 60)
+        let sixteenHoursAgo = now.addingTimeInterval(-16 * 60 * 60)
 
         // Group games by user's team
         let gamesByTeam = Dictionary(grouping: games) { $0.userTeamAbbreviation.lowercased() }
@@ -138,7 +145,7 @@ struct SportsScheduleProvider: TimelineProvider {
         var selectedGames: [Game] = []
 
         for (_, teamGames) in gamesByTeam {
-            if let bestGame = selectBestGame(from: teamGames, now: now, twelveHoursAgo: twelveHoursAgo) {
+            if let bestGame = selectBestGame(from: teamGames, now: now, sixteenHoursAgo: sixteenHoursAgo) {
                 selectedGames.append(bestGame)
             }
         }
@@ -157,15 +164,15 @@ struct SportsScheduleProvider: TimelineProvider {
     }
 
     /// Selects the best game for a team based on priority rules
-    private func selectBestGame(from games: [Game], now: Date, twelveHoursAgo: Date) -> Game? {
+    private func selectBestGame(from games: [Game], now: Date, sixteenHoursAgo: Date) -> Game? {
         // 1. In-progress games have highest priority
         if let inProgress = games.first(where: { $0.status == .inProgress }) {
             return inProgress
         }
 
-        // 2. Recently completed games (within 12 hours) - show the most recent
+        // 2. Recently completed games (within 16 hours) - show the most recent
         let recentlyCompleted = games
-            .filter { $0.status == .completed && $0.startTime >= twelveHoursAgo }
+            .filter { $0.status == .completed && $0.startTime >= sixteenHoursAgo }
             .sorted { $0.startTime > $1.startTime } // Most recent first
 
         if let recent = recentlyCompleted.first {
@@ -346,6 +353,42 @@ extension AppGroup.WidgetBackgroundPreset {
             return Color(red: 1.0, green: 0.8, blue: 0.4)    // Bright gold
         case .black, .charcoal:
             return .green
+        }
+    }
+
+    /// Color for "GAME" in the two-tone title
+    var gameColor: Color {
+        switch self {
+        case .system, .black, .charcoal:
+            return Color(red: 0.2, green: 0.5, blue: 0.9)    // Blue
+        case .darkBlue:
+            return Color(red: 0.5, green: 0.8, blue: 1.0)    // Light blue
+        case .darkGreen:
+            return Color(red: 0.3, green: 0.9, blue: 0.5)    // Light green
+        case .darkPurple:
+            return Color(red: 0.7, green: 0.5, blue: 1.0)    // Light purple
+        case .darkRed:
+            return Color(red: 1.0, green: 0.5, blue: 0.5)    // Light red
+        case .darkOrange:
+            return Color(red: 1.0, green: 0.7, blue: 0.3)    // Light orange
+        }
+    }
+
+    /// Color for "TIME" in the two-tone title
+    var timeColor: Color {
+        switch self {
+        case .system, .black, .charcoal:
+            return Color(red: 1.0, green: 0.6, blue: 0.2)    // Orange
+        case .darkBlue:
+            return Color(red: 1.0, green: 0.7, blue: 0.3)    // Orange
+        case .darkGreen:
+            return Color(red: 0.9, green: 0.8, blue: 0.3)    // Yellow-gold
+        case .darkPurple:
+            return Color(red: 1.0, green: 0.6, blue: 0.7)    // Pink
+        case .darkRed:
+            return Color(red: 1.0, green: 0.85, blue: 0.4)   // Gold
+        case .darkOrange:
+            return Color(red: 1.0, green: 0.95, blue: 0.6)   // Light yellow
         }
     }
 }
