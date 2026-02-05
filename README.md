@@ -37,8 +37,8 @@ An iOS home screen widget that displays upcoming games, live scores, and final r
 <!-- Add screenshots here -->
 | Widget | Companion App |
 |--------|---------------|
-| ![Small Widget](docs/screenshots/widget-small.png) | ![My Teams](docs/screenshots/app-myteams.png) |
-| ![Medium Widget](docs/screenshots/widget-medium.png) | ![Scores](docs/screenshots/app-scores.png) |
+| ![My Teams](docs/screenshots/app-myteams.png) | ![Scores](docs/screenshots/app-scores.png) |
+| ![Small Widget](docs/screenshots/widget-small.png) | ![Medium Widget](docs/screenshots/widget-medium.png) |
 
 ## Requirements
 
