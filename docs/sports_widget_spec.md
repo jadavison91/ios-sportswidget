@@ -74,9 +74,14 @@ Create an iOS home screen widget that displays upcoming game times and scores fo
 
 ### Game Prioritization
 - When more games exist than widget can display, show most relevant games
-- Priority order: In-progress → Scheduled → Completed
+- **Medium Widget Priority**:
+  1. Favorite team live games are **exclusive** (only these shown when happening)
+  2. Favorite team completed games (visible for 16 hours)
+  3. Favorite team upcoming games (one per team)
+  4. Other teams' live games (shown after favorite team entries, removed immediately when complete)
+  5. If no favorite team game today, other teams' live games get top priority
+- **Small Widget Priority**: In-progress → Completed (16h) → Scheduled
 - Within each status, sort by start time (earliest first)
-- User's team games take priority over league fallback games
 
 ## Data Models
 
@@ -229,11 +234,13 @@ struct ScheduleEntry: TimelineEntry {
 └─────────────────────────────────┘
 ```
 
-### Game Day Display Logic
-1. **User's team playing today**: Show their game (score if completed/in-progress, time if upcoming)
-2. **User's team game completed**: Keep showing "FINAL" score until midnight, don't replace with upcoming games
-3. **User's team not playing**: Show other games from their league(s)
-4. **Multiple leagues**: Prioritize user's teams, then fill with league games
+### Game Day Display Logic (Medium Widget)
+1. **Favorite team is live**: Show ONLY favorite team live games (exclusive - no other games)
+2. **Favorite team game completed**: Keep showing "FINAL" score for 16 hours after start time
+3. **Favorite team has game today (not live)**: Show favorite team entry first, then other teams' live games
+4. **Favorite team not playing today**: Show other teams' live games from favorite leagues (priority)
+5. **Other teams' completed games**: Removed immediately (no 16-hour window)
+6. **Multiple leagues**: Each league applies its own fallback logic independently
 
 ## Implementation Phases
 
@@ -392,7 +399,29 @@ These enhancements track ongoing improvements after the v1.0.0 release.
 - Updated header in `MediumWidgetView.swift`
 - Uses same `gameColor` and `timeColor` properties from WidgetBackgroundPreset
 
-### Enhancement 5: Widget Configuration Options (AppIntents)
+### Enhancement 5: Medium Widget Live Game Priority ✅ COMPLETE
+**Status**: Complete
+
+**Problem**: Medium widget showed a mix of live games and upcoming games simultaneously, which felt cluttered when favorite teams were playing live.
+
+**Solution**:
+- When favorite teams are live, show ONLY their live games (exclusive mode)
+- Favorite team completed games remain visible for 16 hours
+- Other teams' live games shown only when favorite team is not live
+- Other teams' completed games removed immediately (no 16-hour window)
+- If no favorite team game today, other teams' live games get priority
+
+**Implementation**:
+- Added `selectGamesForMediumWidget(from:)` in `SportsWidgetExtension.swift`
+- Separates games by `userTeamAbbreviation` (empty = league fallback game)
+- Priority logic:
+  1. Check for favorite team live games → return exclusively if any exist
+  2. Build display list with `selectBestGamePerFavoriteTeam(from:now:sixteenHoursAgo:)`
+  3. Add other teams' live games (after favorite entries, or first if no favorite game today)
+- Added `mediumWidgetGamePriority(_:)` for sorting within favorite team games
+- Small widget behavior unchanged (uses original `selectNextGamePerTeam`)
+
+### Enhancement 6: Widget Configuration Options (AppIntents)
 **Status**: Planned
 
 **Problem**: Users cannot customize which teams appear on individual widgets. All widgets show the same games based on global team selection.
@@ -408,7 +437,7 @@ These enhancements track ongoing improvements after the v1.0.0 release.
 - Migrate from shared UserDefaults to per-widget configuration
 - Maintain backward compatibility with existing widgets
 
-### Enhancement 6: Performance Optimization
+### Enhancement 7: Performance Optimization
 **Status**: Planned
 
 **Problem**: General performance review needed to ensure optimal battery usage and responsiveness.
@@ -446,6 +475,9 @@ These enhancements track ongoing improvements after the v1.0.0 release.
 14. Winning team score displays in green for final games
 15. Custom widget background color persists and displays correctly
 16. App displays "Gametime" branding consistently
+17. Medium widget shows only favorite team games when they're live
+18. Other teams' completed games removed immediately from medium widget
+19. Other teams' live games shown after favorite team entries (or first if no favorite game today)
 
 ### Edge Cases
 - No internet connection
@@ -462,6 +494,9 @@ These enhancements track ongoing improvements after the v1.0.0 release.
 - Tied game at final (no green highlighting for either team)
 - Custom background color readability in light vs dark mode
 - Widget background color not set (use default)
+- Multiple favorite teams live simultaneously (show all)
+- Favorite team game ends while other teams still playing (transition from exclusive to mixed)
+- All favorite teams' games completed, other teams still live (show completed + live)
 
 ## Performance Targets
 - API response time: < 2 seconds
