@@ -129,10 +129,10 @@ actor DataCache {
         memoryCacheTimestamp = nil
     }
 
-    /// Checks if cache is stale (older than 24 hours)
+    /// Checks if cache is stale (older than 10 minutes for live score updates)
     var isCacheStale: Bool {
         guard let lastFetch = lastFetchDate else { return true }
-        let staleThreshold: TimeInterval = 24 * 60 * 60 // 24 hours
+        let staleThreshold: TimeInterval = 10 * 60 // 10 minutes
         return Date().timeIntervalSince(lastFetch) > staleThreshold
     }
 
@@ -309,7 +309,7 @@ extension DataCache {
         }
 
         let timeSinceLastFetch = Date().timeIntervalSince(lastFetch)
-        let prefetchThreshold: TimeInterval = 22 * 60 * 60 // 22 hours (2 hours before 24-hour expiry)
+        let prefetchThreshold: TimeInterval = 8 * 60 // 8 minutes (2 minutes before 10-minute expiry)
 
         if timeSinceLastFetch > prefetchThreshold {
             _ = try? await refreshGames(for: teams)

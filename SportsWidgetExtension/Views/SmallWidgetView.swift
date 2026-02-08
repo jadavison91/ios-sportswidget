@@ -139,13 +139,13 @@ struct SmallGameRowView: View {
             Image(uiImage: uiImage)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 44, height: 44)
+                .frame(width: 38, height: 38)
         } else {
             // Fallback to abbreviation
             Text(abbreviation)
-                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .font(.system(size: 14, weight: .bold, design: .rounded))
                 .foregroundStyle(colorPalette.foregroundColor)
-                .frame(width: 44, height: 44)
+                .frame(width: 38, height: 38)
         }
     }
 
@@ -154,14 +154,14 @@ struct SmallGameRowView: View {
             Spacer()
 
             // Teams with logos and score (centered)
-            HStack(spacing: 12) {
+            HStack(spacing: 8) {
                 // Away team logo
                 teamLogo(url: game.awayTeamLogoUrl, abbreviation: game.awayTeamAbbreviation)
 
                 // Score or @ symbol
                 if game.shouldShowScore {
                     if let away = game.awayScore, let home = game.homeScore {
-                        HStack(spacing: 3) {
+                        HStack(spacing: 1) {
                             Text("\(away)")
                                 .foregroundStyle(awayScoreColor)
                             Text("-")
@@ -169,11 +169,11 @@ struct SmallGameRowView: View {
                             Text("\(home)")
                                 .foregroundStyle(homeScoreColor)
                         }
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
                     }
                 } else {
                     Text("@")
-                        .font(.system(size: 18, weight: .medium, design: .rounded))
+                        .font(.system(size: 14, weight: .medium, design: .rounded))
                         .foregroundStyle(colorPalette.secondaryForegroundColor)
                 }
 

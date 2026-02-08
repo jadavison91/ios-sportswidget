@@ -83,7 +83,7 @@ struct SportsScheduleProvider: TimelineProvider {
 
         if family == .systemMedium {
             // Medium widget: prioritize live games, exclude completed
-            filteredGames = selectGamesForMediumWidget(from: allGames)
+            filteredGames = selectGamesForMediumWidget(from: allGames, selectedTeams: selectedTeams)
         } else {
             // Small widget: use existing per-team logic
             filteredGames = selectNextGamePerTeam(from: allGames)
@@ -143,21 +143,26 @@ struct SportsScheduleProvider: TimelineProvider {
 
     /// Selects games for medium widget with the following priority:
     /// 1. If favorite team is live → show ONLY favorite team live games
-    /// 2. Otherwise show favorite team games (completed 16h, upcoming) + other teams' live games
-    /// 3. If no favorite team games today → show other teams' live games
+    /// 2. Otherwise: favorite completed → other teams' live → favorite upcoming
     /// - Favorite team completed games: visible for 16 hours
+    /// - Other team live games: prioritized over favorite upcoming games
     /// - Other team completed games: removed immediately
-    private func selectGamesForMediumWidget(from games: [Game]) -> [Game] {
+    private func selectGamesForMediumWidget(from games: [Game], selectedTeams: [Team]) -> [Game] {
         let now = Date()
         let sixteenHoursAgo = now.addingTimeInterval(-16 * 60 * 60)
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: now)
-        let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
 
-        // Separate favorite team games from league fallback games
-        // Favorite team games have userTeamAbbreviation set, league games have it empty
-        let favoriteTeamGames = games.filter { !$0.userTeamAbbreviation.isEmpty }
-        let leagueGames = games.filter { $0.userTeamAbbreviation.isEmpty }
+        // Build set of favorite team abbreviations for quick lookup
+        let favoriteAbbreviations = Set(selectedTeams.map { $0.abbreviation.lowercased() })
+
+        // Helper to check if a game involves a favorite team
+        func isFavoriteTeamGame(_ game: Game) -> Bool {
+            favoriteAbbreviations.contains(game.homeTeamAbbreviation.lowercased()) ||
+            favoriteAbbreviations.contains(game.awayTeamAbbreviation.lowercased())
+        }
+
+        // Separate favorite team games from other teams' games
+        let favoriteTeamGames = games.filter { isFavoriteTeamGame($0) }
+        let otherTeamGames = games.filter { !isFavoriteTeamGame($0) }
 
         // Check if any favorite team is currently live
         let favoriteTeamLiveGames = favoriteTeamGames.filter { $0.status == .inProgress }
@@ -170,102 +175,90 @@ struct SportsScheduleProvider: TimelineProvider {
         // No favorite team is currently live - build the display list
         var result: [Game] = []
 
-        // Add favorite team games (one per team): completed within 16h, scheduled, postponed
-        let favoriteGamesToShow = selectBestGamePerFavoriteTeam(
+        // 1. Favorite team COMPLETED games (one per team, within 16h)
+        let favoriteCompletedGames = selectCompletedGamesPerFavoriteTeam(
             from: favoriteTeamGames,
-            now: now,
-            sixteenHoursAgo: sixteenHoursAgo
+            sixteenHoursAgo: sixteenHoursAgo,
+            favoriteAbbreviations: favoriteAbbreviations
         )
-        result.append(contentsOf: favoriteGamesToShow)
+        result.append(contentsOf: favoriteCompletedGames)
 
-        // Check if favorite team has any games today
-        let hasFavoriteGameToday = favoriteTeamGames.contains { game in
-            game.startTime >= today && game.startTime < tomorrow
-        }
+        // Track which favorite teams already have a game showing
+        var teamsWithGameShowing = Set(favoriteCompletedGames.flatMap { game in
+            [game.homeTeamAbbreviation.lowercased(), game.awayTeamAbbreviation.lowercased()]
+                .filter { favoriteAbbreviations.contains($0) }
+        })
 
-        // Get other teams' LIVE games only (completed games are excluded)
-        let otherTeamsLiveGames = leagueGames
+        // 2. Other teams' LIVE games (prioritized over favorite upcoming)
+        let otherTeamsLiveGames = otherTeamGames
             .filter { $0.status == .inProgress }
             .sorted { $0.startTime < $1.startTime }
+        result.append(contentsOf: otherTeamsLiveGames)
 
-        if hasFavoriteGameToday {
-            // Favorite team plays today: add other live games AFTER favorite team entries
-            result.append(contentsOf: otherTeamsLiveGames)
-        } else {
-            // No favorite team game today: other live games get priority (prepend)
-            result = otherTeamsLiveGames + result
-        }
+        // 3. Favorite team UPCOMING games (one per team that doesn't already have a game showing)
+        let favoriteUpcomingGames = selectUpcomingGamesPerFavoriteTeam(
+            from: favoriteTeamGames,
+            now: now,
+            favoriteAbbreviations: favoriteAbbreviations,
+            excludeTeams: teamsWithGameShowing
+        )
+        result.append(contentsOf: favoriteUpcomingGames)
 
         return result
     }
 
-    /// Selects the best game for each favorite team (one per team)
-    /// Priority: in-progress → completed (within 16h) → scheduled → postponed
-    private func selectBestGamePerFavoriteTeam(
+    /// Selects completed games for favorite teams (one per team, within 16 hours)
+    private func selectCompletedGamesPerFavoriteTeam(
         from games: [Game],
-        now: Date,
-        sixteenHoursAgo: Date
+        sixteenHoursAgo: Date,
+        favoriteAbbreviations: Set<String>
     ) -> [Game] {
-        // Group games by user's team
-        let gamesByTeam = Dictionary(grouping: games) { $0.userTeamAbbreviation.lowercased() }
+        var gamesByFavoriteTeam: [String: [Game]] = [:]
 
-        var selectedGames: [Game] = []
+        for game in games where game.status == .completed && game.startTime >= sixteenHoursAgo {
+            let homeAbbr = game.homeTeamAbbreviation.lowercased()
+            let awayAbbr = game.awayTeamAbbreviation.lowercased()
 
-        for (_, teamGames) in gamesByTeam {
-            // 1. In-progress (shouldn't happen here since we check above, but for safety)
-            if let live = teamGames.first(where: { $0.status == .inProgress }) {
-                selectedGames.append(live)
-                continue
-            }
+            let favoriteTeam = favoriteAbbreviations.contains(homeAbbr) ? homeAbbr :
+                               favoriteAbbreviations.contains(awayAbbr) ? awayAbbr : nil
 
-            // 2. Recently completed (within 16 hours) - most recent first
-            let recentlyCompleted = teamGames
-                .filter { $0.status == .completed && $0.startTime >= sixteenHoursAgo }
-                .sorted { $0.startTime > $1.startTime }
-
-            if let completed = recentlyCompleted.first {
-                selectedGames.append(completed)
-                continue
-            }
-
-            // 3. Next scheduled game
-            let scheduled = teamGames
-                .filter { $0.status == .scheduled && $0.startTime >= now }
-                .sorted { $0.startTime < $1.startTime }
-
-            if let next = scheduled.first {
-                selectedGames.append(next)
-                continue
-            }
-
-            // 4. Postponed games as fallback
-            if let postponed = teamGames.first(where: { $0.status == .postponed }) {
-                selectedGames.append(postponed)
+            if let team = favoriteTeam {
+                gamesByFavoriteTeam[team, default: []].append(game)
             }
         }
 
-        // Sort: in-progress first, then completed, then by start time
-        return selectedGames.sorted { game1, game2 in
-            let priority1 = mediumWidgetGamePriority(game1)
-            let priority2 = mediumWidgetGamePriority(game2)
-
-            if priority1 != priority2 {
-                return priority1 < priority2
-            }
-
-            return game1.startTime < game2.startTime
-        }
+        // Select most recent completed game per team
+        return gamesByFavoriteTeam.compactMap { (_, teamGames) in
+            teamGames.sorted { $0.startTime > $1.startTime }.first
+        }.sorted { $0.startTime > $1.startTime }
     }
 
-    /// Priority for sorting favorite team games (lower = higher priority)
-    private func mediumWidgetGamePriority(_ game: Game) -> Int {
-        switch game.status {
-        case .inProgress: return 0
-        case .completed: return 1
-        case .scheduled: return 2
-        case .postponed: return 3
-        case .canceled: return 4
+    /// Selects upcoming games for favorite teams (one per team, excluding teams that already have games showing)
+    private func selectUpcomingGamesPerFavoriteTeam(
+        from games: [Game],
+        now: Date,
+        favoriteAbbreviations: Set<String>,
+        excludeTeams: Set<String>
+    ) -> [Game] {
+        var gamesByFavoriteTeam: [String: [Game]] = [:]
+
+        for game in games where game.status == .scheduled && game.startTime >= now {
+            let homeAbbr = game.homeTeamAbbreviation.lowercased()
+            let awayAbbr = game.awayTeamAbbreviation.lowercased()
+
+            let favoriteTeam = favoriteAbbreviations.contains(homeAbbr) ? homeAbbr :
+                               favoriteAbbreviations.contains(awayAbbr) ? awayAbbr : nil
+
+            // Skip if this team already has a game showing
+            if let team = favoriteTeam, !excludeTeams.contains(team) {
+                gamesByFavoriteTeam[team, default: []].append(game)
+            }
         }
+
+        // Select next upcoming game per team
+        return gamesByFavoriteTeam.compactMap { (_, teamGames) in
+            teamGames.sorted { $0.startTime < $1.startTime }.first
+        }.sorted { $0.startTime < $1.startTime }
     }
 
     /// Selects only the most relevant game per team for widget display
